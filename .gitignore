@@ -1,3 +1,10 @@
+# Untracked Data
+*FINAL_RAW_DATA/
+
+# Mac
+.DS_Store
+*.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
