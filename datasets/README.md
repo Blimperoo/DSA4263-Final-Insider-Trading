@@ -2,7 +2,7 @@
 This folder does not contain our dataset but contains the how to setup your untracked  `data_untracked` folder, to either scrape the necessary datasets from websites or download them through the google drive link. 
 
 ## How to setup the `data_untracked` folder
-1. Run the below bashcode in the root directory of this git repository.
+1. Run the below bash code in the root directory of this git repository.
 ```{bash}
 mkdir -p data_untracked/raw/sec_submissions/interim \
          data_untracked/raw/sec_submissions/compiled \
@@ -41,6 +41,7 @@ mkdir -p data_untracked/raw/sec_submissions/interim \
 - processed
 
     - all_transactions_merged.csv
+    - transactions_abnormal_returns_{ticker_count}_ticker.csv
     - abnormal_returns.csv
     - unique_names_trans_8above.csv
     - unique_ticker_trans_8above.csv
