@@ -90,9 +90,7 @@ class Feature_Data_Creator:
             how = "left"
         )
         
-        data[feature_columns] = data[feature_columns].fillna(0)
         if data.shape[0] != self.initial_rows:
             print("Rows mismatch after merging, new, old: ", data.shape[0], self.initial_rows)
-        
         
         self.data = data
