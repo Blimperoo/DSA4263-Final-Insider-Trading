@@ -16,6 +16,7 @@ FINAL_FILE = 'snorkel_labels.csv'
 class Feature_Data_Creator:
     def __init__(self):
         self.data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FILE}')
+        self.initial_rows = self.data.shape[0]
     
     def create_features(self):
         ## Creates transaction code features
@@ -67,8 +68,12 @@ class Feature_Data_Creator:
 ################################################################################
 
     def __create_other_features(self):
-        ## Code for label creation
-        pass
+        key_columns = ["ACCESSION_NUMBER", "TRANS_SK"]
+        feature_columns = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", "relative_trade_size_to_others"]
+        
+        data_to_merge = other_feature.create_features()
+        
+        self.__merge_features(data_to_merge, key_columns, feature_columns)
     
 
 ################################################################################
@@ -86,6 +91,8 @@ class Feature_Data_Creator:
         )
         
         data[feature_columns] = data[feature_columns].fillna(0)
+        if data.shape[0] != self.initial_rows:
+            print("Rows mismatch after merging, new, old: ", data.shape[0], self.initial_rows)
         
         
         self.data = data
