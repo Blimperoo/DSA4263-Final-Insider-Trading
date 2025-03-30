@@ -45,7 +45,6 @@ class Feature_Data_Creator:
         self.__merge_features(data_to_merge, key_columns, feature_columns)
         
         
-
 ################################################################################
 # Create Footnote features
 ################################################################################

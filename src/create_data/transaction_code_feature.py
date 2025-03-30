@@ -25,7 +25,7 @@ def create_features():
         print("=== Transaction Key file not found, begin creating  ===")
         
         ## Extract snorkel labels
-        abnormal_transactions = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}')[["ACCESSION_NUMBER", "TRANS_SK","TRANS_CODE", "TRANS_ACQUIRED_DISP_CD", "snorkel_prob", "snorkel_pred"]]
+        abnormal_transactions = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}')[["ACCESSION_NUMBER", "TRANS_SK", "TRANS_CODE", "TRANS_ACQUIRED_DISP_CD", "snorkel_prob", "snorkel_pred"]]
         abnormal_transactions = abnormal_transactions.rename(columns={"snorkel_prob" : "probability", "snorkel_pred" : "prediction"})
         df_features = abnormal_transactions.copy()
 
