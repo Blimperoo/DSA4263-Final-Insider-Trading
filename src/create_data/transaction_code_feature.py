@@ -25,7 +25,7 @@ def create_features():
         print("=== Footnote Key file not found, begin creating  ===")
         
         ## Extract snorkel labels
-        abnormal_transactions = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}')[["ACCESSION_NUMBER", "TRANS_CODE", "TRANS_ACQUIRED_DISP_CD", "snorkel_prob", "snorkel_pred"]]
+        abnormal_transactions = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}')[["ACCESSION_NUMBER", "TRANS_SK", "TRANS_CODE", "TRANS_ACQUIRED_DISP_CD", "snorkel_prob", "snorkel_pred"]]
         abnormal_transactions = abnormal_transactions.rename(columns={"snorkel_prob" : "probability", "snorkel_pred" : "prediction"})
         df_features = abnormal_transactions.copy()
 
@@ -51,7 +51,7 @@ def create_features():
         # Save file
         ##############################
         features_to_keep = ["js_bin", "b_bin", "jb_bin", "os_bin"]
-        key = ["ACCESSION_NUMBER", "TRANS_CODE", "TRANS_ACQUIRED_DISP_CD"]
+        key = ["ACCESSION_NUMBER", "TRANS_SK"]
 
         df_to_save = df_features[features_to_keep + key]
         df_to_save.to_csv(f'{FINAL_FOLDER}/{FINAL_FILE}')
