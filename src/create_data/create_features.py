@@ -37,7 +37,7 @@ class Feature_Data_Creator:
 
     def _create_transaction_code(self):
         
-        key_columns = ["ACCESSION_NUMBER", "TRANS_CODE", "TRANS_ACQUIRED_DISP_CD"]
+        key_columns = ["ACCESSION_NUMBER", "TRANS_SK"]
         feature_columns = ["js_bin", "b_bin", "jb_bin", "os_bin"]
         
         data_to_merge = transaction_code_feature.create_features()
@@ -51,8 +51,12 @@ class Feature_Data_Creator:
 ################################################################################
 
     def __create_footnote_feature(self):
-        ## Code for label creation
-        pass
+        key_columns = ["ACCESSION_NUMBER"]
+        feature_columns = ["distribution", "sell", "trading", "10b5-1", "16b-3"]
+        
+        data_to_merge = footnote_feature.create_features()
+        
+        self.__merge_features(data_to_merge, key_columns, feature_columns)
     
 ################################################################################
 # Create Graph features
