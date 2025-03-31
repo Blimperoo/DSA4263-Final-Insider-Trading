@@ -9,7 +9,7 @@ FINAL_FOLDER = "../data_untracked/features"
 FINAL_FILE = "transaction_code.csv"
 
 def create_features():
-    """This function will create the key-feature footnote if file is not found and then return this Datafram
+    """This function will create the key-feature transaction key if file is not found and then return this Datafram
 
     Returns:
         Dataframe: of features
@@ -19,10 +19,10 @@ def create_features():
     
     # Checks if the file is found
     if FINAL_FILE in current_compiled_files:
-        print("=== Footnote Key file is found. Extracting ===")
+        print("=== Transaction Key file is found. Extracting ===")
         df_to_return = pd.read_csv(f'{FINAL_FOLDER}/{FINAL_FILE}')
     else: # Create features and save
-        print("=== Footnote Key file not found, begin creating  ===")
+        print("=== Transaction Key file not found, begin creating  ===")
         
         ## Extract snorkel labels
         abnormal_transactions = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}')[["ACCESSION_NUMBER", "TRANS_SK", "TRANS_CODE", "TRANS_ACQUIRED_DISP_CD", "snorkel_prob", "snorkel_pred"]]
