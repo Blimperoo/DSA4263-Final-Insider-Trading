@@ -545,9 +545,9 @@ def create_features():
         ##############################
         # Save file
         ##############################
-        #features_to_keep = ["lobbyist_score_final", "num_connections_to_senators", "num_connections_to_house", "position_seniority_score", "PI_combined"]
         features_to_keep = ["lobbyist_score_final", "total_senate_connections", "total_house_connections", "combined_seniority_score", "PI_combined_total"]
         key = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;"]
+
 
         df_to_save = final_summary[features_to_keep + key]
         df_to_save.to_csv(f'{FINAL_FOLDER}/{FINAL_FILE}')
