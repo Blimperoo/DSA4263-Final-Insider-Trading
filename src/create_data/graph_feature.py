@@ -19,7 +19,7 @@ def create_features():
     # Checks if the file is found
     if FINAL_FILE in current_compiled_files:
         print("=== Graph Key file is found. Extracting ===")
-        df_to_return = pd.read_csv(f'{FINAL_FOLDER}/{FINAL_FILE}')
+        df_to_return = pd.read_csv(f'{FINAL_FOLDER}/{FINAL_FILE}', parse_dates=['TRANS_DATE'])
     else: # Create features and save
         print("=== Graph Key file not found, begin creating  ===")
         
@@ -134,7 +134,7 @@ def create_features():
         ]
 
         # Load the CSV file
-        df_relationships = pd.read_csv("merged_relationships_full.csv")
+        df_relationships = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/merged_relationships_full.csv")
 
         # Drop the specified columns
         df_relationships = df_relationships.drop(columns=cols_to_drop, errors='ignore')
@@ -142,7 +142,7 @@ def create_features():
         #lowercase for merging
         df_relationships['entity1_name'] = df_relationships['entity1_name'].str.lower().str.strip()
 
-        matches = pd.read_csv('name_match_improved.csv')
+        matches = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/name_match_improved.csv')
 
         threshold = 7.5 # for matching score 
         matches = matches[matches['score'] >= threshold]
@@ -164,14 +164,16 @@ def create_features():
         merged_entity['cat_is_board'] = merged_entity['cat_is_board'].fillna(False)
         merged_entity['is_current'] = merged_entity['is_current'].fillna(False)
 
-        df_form4 = pd.read_csv('df_result_with_anomaly_scores.csv')
+        df_form4 = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}')
 
         # Only looking at 1 RPTOWNER for now
         df_form4 = df_form4[df_form4['NUM_RPTOWNERCIK_;'] == 1]
 
         # Include columns as needed 
-        columns_need = ['TRANS_SK', 'TRANS_DATE', 'RPTOWNERNAME_;', 'CAR_5_before',
-        'CAR_5_after', 'CAR_30_before', 'CAR_30_after', 'CAR_60_before',
+        columns_need = ['ACCESSION_NUMBER', 'TRANS_SK', 'TRANS_DATE', 'RPTOWNERNAME_;']
+        
+        # These were used in EDA codes
+        '''['CAR_5_before', 'CAR_5_after', 'CAR_30_before', 'CAR_30_after', 'CAR_60_before',
         'CAR_60_after', 'CAR_120_before', 'CAR_120_after',
         'effective_CAR_30_after', 'effective_CAR_60_after','effective_CAR_120_after', 
         'local_score_30', 'n_local_30','isolation_raw_30','local_mean_30', 'local_std_30', 'n_local_unq_30',
@@ -182,7 +184,7 @@ def create_features():
         'local_score_30_sig', 'isolation_z_30_sig',
         'anomaly_score_30_sig', 'local_score_60_sig', 'isolation_z_60_sig',
         'anomaly_score_60_sig', 'local_score_120_sig', 'isolation_z_120_sig',
-        'anomaly_score_120_sig']
+        'anomaly_score_120_sig']'''
 
         #Update columns for merging 
         df_form4['RPTOWNERNAME_;'] = df_form4['RPTOWNERNAME_;'].str.lower().str.strip()
@@ -544,7 +546,8 @@ def create_features():
         # Save file
         ##############################
         features_to_keep = ["lobbyist_score_final", "total_senate_connections", "total_house_connections", "combined_seniority_score", "PI_combined_total"]
-        key = ["TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;"]
+        key = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;"]
+
 
         df_to_save = final_summary[features_to_keep + key]
         df_to_save.to_csv(f'{FINAL_FOLDER}/{FINAL_FILE}')
