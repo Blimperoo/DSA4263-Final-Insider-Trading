@@ -15,7 +15,7 @@ FINAL_FILE = 'snorkel_labels.csv'
 
 class Feature_Data_Creator:
     def __init__(self):
-        self.data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FILE}')
+        self.data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FILE}', parse_dates=['TRANS_DATE'])
         self.initial_rows = self.data.shape[0]
     
     def create_features(self):
@@ -62,8 +62,12 @@ class Feature_Data_Creator:
 ################################################################################
 
     def __create_graph_features(self):
-        ## Code for label creation
-        pass
+        key_columns = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;"] # removed "TRANS_DATE"
+        feature_columns = ["lobbyist_score_final", "total_senate_connections", "total_house_connections", "combined_seniority_score", "PI_combined_total"]
+        
+        data_to_merge = graph_feature.create_features()
+        data_to_merge['TRANS_DATE'] = pd.to_datetime(data_to_merge['TRANS_DATE'])
+        self.__merge_features(data_to_merge, key_columns, feature_columns)
 
 
 ################################################################################
@@ -84,12 +88,10 @@ class Feature_Data_Creator:
 ################################################################################  
 
     def __merge_features(self, data_to_merge, key_columns, feature_columns):
-        
         data = pd.merge(
             self.data,
-            data_to_merge,
-            left_on = key_columns,
-            right_on = key_columns,
+            data_to_merge[key_columns + feature_columns],
+            on = key_columns,
             how = "left"
         )
         
