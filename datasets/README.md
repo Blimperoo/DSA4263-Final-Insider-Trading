@@ -29,22 +29,21 @@ mkdir -p data_untracked/raw/sec_submissions/interim \
 
     - abnormal_returns/
         - crsp/
-            - daily_stock_price_by_ticker/
+            - daily_stock_data_by_ticker/
                 - {ticker}.csv...
-            - crsp_daily_beta.csv
+            - daily_beta_split/
+                - part_1.csv
+                ...
+                - part_5.csv
         - fred/
-            - treasury_bills.csv
-        - transactions_abnormal_returns_{ticker_count}_ticker_COMPARE.csv
+            - risk_free_rate_daily.csv
 
-    - profile_data/ # Caitlyn can modify this
+    - profile_data/ 
 
 - processed
 
-    - all_transactions_merged.csv
-    - transactions_abnormal_returns_{ticker_count}_ticker.csv
-    - abnormal_returns.csv
-    - unique_names_trans_8above.csv
-    - unique_ticker_trans_8above.csv
-
+    - `transactions_final.csv` shape: (3546490, 24)
+    - `transactions_abnormal_returns_anomaly_score.csv` rows: 3171001
+    - `snorkel_labels.csv`
 
 ## Steps to run our code to re-create the dataset
