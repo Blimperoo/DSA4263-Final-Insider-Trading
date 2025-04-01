@@ -95,9 +95,14 @@ def create_features():
                                                            ).replace([np.inf, -np.inf], np.nan)
 
         ##############################
+        # trans_amt
+        ##############################
+        trans_score_df['trans_amt'] = trans_score_df['TRANS_SHARES'] * trans_score_df['TRANS_PRICEPERSHARE']
+
+        ##############################
         # Save file
         ##############################
-        features_to_keep = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", "relative_trade_size_to_others"]
+        features_to_keep = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", "relative_trade_size_to_others", "trans_amt"]
         key = ["ACCESSION_NUMBER", "TRANS_SK"]
 
         df_to_save = trans_score_df[features_to_keep + key]

@@ -76,7 +76,7 @@ class Feature_Data_Creator:
 
     def __create_other_features(self):
         key_columns = ["ACCESSION_NUMBER", "TRANS_SK"]
-        feature_columns = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", "relative_trade_size_to_others"]
+        feature_columns = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", "relative_trade_size_to_others", 'trans_amt']
         
         data_to_merge = other_feature.create_features()
         
