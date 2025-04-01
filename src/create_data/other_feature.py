@@ -95,14 +95,32 @@ def create_features():
                                                            ).replace([np.inf, -np.inf], np.nan)
 
         ##############################
-        # trans_amt
+        # other simple features
         ##############################
         trans_score_df['trans_amt'] = trans_score_df['TRANS_SHARES'] * trans_score_df['TRANS_PRICEPERSHARE']
+        def categorize_security(desc):
+            """
+            Simple function to bucket security descriptions into:
+            - 'common_stock' 
+            - 'derivative'
+            - 'other'
+            """
+            desc_lower = str(desc).lower()
+            if ("com" in desc_lower and "stoc" in desc_lower) or "class a" in desc_lower or "ordinary shares" in desc_lower:
+                # check again
+                return "common_stock"
+            #elif any(keyword in desc_lower for keyword in ["option", "warrant", "right to buy"]):
+            #    #need to double check for options (ref to brashears)
+            #    return "derivative"
+            else:
+                return "other"
+
+        trans_score_df["security_category"] = trans_score_df["SECURITY_TITLE"].apply(categorize_security)
 
         ##############################
         # Save file
         ##############################
-        features_to_keep = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", "relative_trade_size_to_others", "trans_amt"]
+        features_to_keep = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", "relative_trade_size_to_others", "trans_amt", "security_category"]
         key = ["ACCESSION_NUMBER", "TRANS_SK"]
 
         df_to_save = trans_score_df[features_to_keep + key]
