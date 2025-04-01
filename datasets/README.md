@@ -37,13 +37,16 @@ mkdir -p data_untracked/raw/sec_submissions/interim \
                 - part_5.csv
         - fred/
             - risk_free_rate_daily.csv
+        - trans_ars/
+            {stores the batched csv of abnormal_return calculations}
 
     - profile_data/ 
 
 - processed
 
-    - `transactions_final.csv` shape: (3546490, 24)
-    - `transactions_abnormal_returns_anomaly_score.csv` rows: 3171001
+    - `transactions_final.csv` shape: (3546490, 24) 
+    - `transactions_abnormal_returns.csv` shape: (3171001, 46)
+    - `transactions_abnormal_returns_anomaly_score.csv` shape: (3171001, 83)
     - `snorkel_labels.csv`
 
 ## Steps to run our code to re-create the dataset
