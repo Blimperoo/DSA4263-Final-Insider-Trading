@@ -12,6 +12,7 @@ import json
 
 
 RAW_DATA_FOLDER = '../data_untracked/raw/sec_submissions'
+PROCESSED_FOLDER = '../data_untracked/processed'
 
 # URL for SEC data
 URL = "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets"
@@ -47,6 +48,14 @@ class Data_Extractor:
             self.__extract_and_merge_tsv_files()
             self.__load_metadata_and_build_mapping()
             self.__process_tsv_files()
+    
+    def merge_form4(self):
+        if self.__check_processed_files():
+            print("========== Required merged transactions present ==========")
+        else:
+            print("========== merged transactions files not present ==========")
+            print("=============== Begin merging ===============")
+            self.__merge_form4()
         
 ################################################################################
 # CHECK IF COMPILED FILES EXIST
@@ -58,6 +67,13 @@ class Data_Extractor:
             if file not in current_compiled_files:
                 return False
         return True
+    
+    def __check_processed_files(self):
+        files = os.listdir(PROCESSED_FOLDER)
+        if "transactions_final.csv" not in files:
+            return False
+        return True
+
 
 ################################################################################
 # EXTRACT ZIP FILES FROM SEC 
@@ -241,3 +257,94 @@ class Data_Extractor:
             # Delete original tsv
             os.remove(tsv_file)
             print(f"  Deleted original file: {tsv_file}")
+
+################################################################################
+# EXTRACT ZIP FILES FROM SEC 
+################################################################################
+
+    def __merge_form4(self):
+        
+        print("--- Load all the CSV files ---")
+        submission_data = pd.read_csv(f"{FINAL_FOLDER}/SUBMISSION.csv", parse_dates=['FILING_DATE'])
+        nonderiv_trans_data = pd.read_csv(f"{FINAL_FOLDER}/NONDERIV_TRANS.csv", parse_dates=['TRANS_DATE'])
+        deriv_trans_data = pd.read_csv(f"{FINAL_FOLDER}/DERIV_TRANS.csv", parse_dates=['TRANS_DATE'])
+        reporting_owner_data = pd.read_csv(f"{FINAL_FOLDER}/REPORTINGOWNER.csv")
+
+        # Define constants
+        YEARS_THRESHOLD = (2005, 2021) 
+        SELECTED_TRANSACTION_COLS = ['ACCESSION_NUMBER', 'SECURITY_TITLE', 'TRANS_DATE', 'DEEMED_EXECUTION_DATE', 'TRANS_CODE', 'EQUITY_SWAP_INVOLVED',
+                             'TRANS_TIMELINESS', 'TRANS_SHARES', 'TRANS_PRICEPERSHARE', 'TRANS_ACQUIRED_DISP_CD',
+                             'SHRS_OWND_FOLWNG_TRANS', 'DIRECT_INDIRECT_OWNERSHIP', 'NATURE_OF_OWNERSHIP']
+        SUBMISSION_COLS = ['ACCESSION_NUMBER', 'FILING_DATE', 'PERIOD_OF_REPORT', 'ISSUERCIK', 'ISSUERNAME', 'ISSUERTRADINGSYMBOL']
+        
+        ##############################
+        # Merging Transaction data (vertically)
+        ##############################
+        print("--- Merge transaction data ---")
+        df1 = nonderiv_trans_data[['NONDERIV_TRANS_SK'] + SELECTED_TRANSACTION_COLS].copy().rename(columns={'NONDERIV_TRANS_SK':'TRANS_SK'})
+        df2 = deriv_trans_data[['DERIV_TRANS_SK'] + SELECTED_TRANSACTION_COLS].copy().rename(columns={'DERIV_TRANS_SK':'TRANS_SK'})
+        all_transaction_data = pd.concat([df1,df2], axis=0, ignore_index=True).reset_index(drop=True)
+        if all_transaction_data.shape != (9391301, 14):
+            print("Unexpected shape for all_transaction_data: ", all_transaction_data.shape, "but expected: (9391301, 14)")
+        
+        # Select only transactions from 2005 to 2021
+        all_transaction_data = all_transaction_data[(all_transaction_data['TRANS_DATE'].dt.year >= YEARS_THRESHOLD[0]) & (all_transaction_data['TRANS_DATE'].dt.year <= YEARS_THRESHOLD[1])]
+        if all_transaction_data.shape != (8176007, 14):
+            print("Unexpected shape for all_transaction_data: ", all_transaction_data.shape, "but expected: (8176007, 14)")
+        
+        # Merge with submission data on ACCESSION_NUMBER 
+        all_transaction_data_2 = all_transaction_data.merge(submission_data[SUBMISSION_COLS], on='ACCESSION_NUMBER', how='left')
+        
+        assert all_transaction_data_2.shape[0] == all_transaction_data.shape[0]
+
+        ##############################
+        # Merging reporting owner data to submission 
+        ##############################
+        print("--- Merge reporting owner data ---")
+        # Ensure that ';' is NOT in these columns, such that a split by ';' will give the exact number of elements
+        assert reporting_owner_data['RPTOWNERCIK'].map(str).str.contains(';').sum() == 0
+        assert reporting_owner_data['RPTOWNERNAME'].str.contains(';').sum() == 0
+        assert reporting_owner_data['RPTOWNER_RELATIONSHIP'].str.contains(';').sum() == 0
+
+        # Ensure that '#' is NOT in this columns, Note that ';' is present in too many of these rows
+        reporting_owner_data['RPTOWNER_TITLE'] = reporting_owner_data['RPTOWNER_TITLE'].astype(str).str.replace('#', '', regex=False)
+        assert reporting_owner_data['RPTOWNER_TITLE'].str.contains('#').sum() == 0
+
+        # One form4 submission can have multiple reporting owners. Join them together below. 
+        def join_with_nan(series):
+            '''catch NaNs and convert to 'NaN' string, to ensure they are not removed and the count is correct'''
+            return ';'.join(series.fillna('NaN').astype(str))
+        def hashtag_join_with_nan(series):
+            '''catch NaNs and convert to 'NaN' string, to ensure they are not removed and the count is correct'''
+            return '#'.join(series.fillna('NaN').astype(str))
+
+        # Group by ACCESSION_NUMBER and join other fields as semicolon-separated strings
+        grouped_reporting_owner = reporting_owner_data.groupby('ACCESSION_NUMBER', as_index=False).agg({
+            'RPTOWNERCIK': [join_with_nan, 'count'],
+            'RPTOWNERNAME': join_with_nan,
+            'RPTOWNER_RELATIONSHIP': join_with_nan,
+            'RPTOWNER_TITLE': hashtag_join_with_nan
+        })
+
+        assert reporting_owner_data['ACCESSION_NUMBER'].nunique() == grouped_reporting_owner.shape[0]
+
+        # Flatten MultiIndex columns
+        grouped_reporting_owner.columns = ['ACCESSION_NUMBER', 'RPTOWNERCIK_;', 'NUM_RPTOWNERCIK', 'RPTOWNERNAME_;', 'RPTOWNER_RELATIONSHIP_;','RPTOWNER_TITLE_#']
+
+        all_transaction_direct_final = all_transaction_data_2.merge(grouped_reporting_owner, on='ACCESSION_NUMBER', how='left') 
+
+        assert all_transaction_direct_final.shape[0] == all_transaction_data_2.shape[0]
+
+        ##############################
+        # Filter out codes
+        ##############################
+        print("--- Filter out codes ---")
+        all_transaction_direct_final_filter = all_transaction_direct_final[all_transaction_direct_final['TRANS_CODE'].isin(['P', 'S', 'J', 'V','I','G'])]
+        if all_transaction_direct_final_filter.shape != (3546490, 24):
+            print("Unexpected shape for all_transaction_direct_final_filter: ", all_transaction_direct_final_filter.shape, "but expected: (3546490, 24)")
+
+        ##############################
+        # Export to csv
+        ##############################
+        print(f"--- Export final merged file, shape {all_transaction_direct_final_filter.shape} to csv ---")
+        all_transaction_direct_final_filter.to_csv(f"{PROCESSED_FOLDER}/transactions_final.csv", index=False)
