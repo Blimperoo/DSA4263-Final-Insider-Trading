@@ -6,17 +6,19 @@ from create_data import transaction_code_feature
 from create_data import graph_feature
 from create_data import footnote_feature
 from create_data import other_feature
+from create_data import folder_location
 
-PROCESSED_DATA_FOLDER = '../data_untracked/processed'
+PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 
-FEATURES_DATA_FOLDER = '../data_untracked/features'
+FEATURES_DATA_FOLDER = folder_location.FEATURES_DATA_FOLDER
 
-FINAL_FILE = 'snorkel_labels.csv'
+FINAL_FILE = folder_location.ABNORMAL_CSV
 
 class Feature_Data_Creator:
     def __init__(self):
         self.data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FILE}', parse_dates=['TRANS_DATE'])
         self.initial_rows = self.data.shape[0]
+        self.features = []
     
     def create_features(self):
         ## Creates transaction code features
@@ -77,7 +79,7 @@ class Feature_Data_Creator:
 
     def __create_other_features(self):
         key_columns = ["ACCESSION_NUMBER", "TRANS_SK"]
-        feature_columns = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", "relative_trade_size_to_others", 'trans_amt', "security_category"]
+        feature_columns = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", "relative_trade_size_to_others"]
         
         data_to_merge = other_feature.create_features()
         
@@ -98,5 +100,7 @@ class Feature_Data_Creator:
         
         if data.shape[0] != self.initial_rows:
             print("Rows mismatch after merging, new, old: ", data.shape[0], self.initial_rows)
+        
+        self.features.extend(feature_columns)
         
         self.data = data
