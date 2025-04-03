@@ -1,0 +1,102 @@
+import numpy as np
+import pandas as pd
+import os
+
+from create_data import transaction_code_feature
+from create_data import graph_feature
+from create_data import footnote_feature
+from create_data import other_feature
+
+PROCESSED_DATA_FOLDER = '../data_untracked/processed'
+
+FEATURES_DATA_FOLDER = '../data_untracked/features'
+
+FINAL_FILE = 'snorkel_labels.csv'
+
+class Feature_Data_Creator:
+    def __init__(self):
+        self.data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FILE}', parse_dates=['TRANS_DATE'])
+        self.initial_rows = self.data.shape[0]
+    
+    def create_features(self):
+        ## Creates transaction code features
+        self._create_transaction_code()
+        
+        ## Creates footnotes features
+        self.__create_footnote_feature()
+        
+        ## Create graph features
+        self.__create_graph_features()
+        
+        ## Create other features
+        self.__create_other_features()
+
+################################################################################
+# Create transaction code
+################################################################################
+
+    def _create_transaction_code(self):
+        
+        key_columns = ["ACCESSION_NUMBER", "TRANS_SK"]
+        feature_columns = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'g_bin']
+        
+        data_to_merge = transaction_code_feature.create_features()
+        
+        self.__merge_features(data_to_merge, key_columns, feature_columns)
+        
+        
+################################################################################
+# Create Footnote features
+################################################################################
+
+    def __create_footnote_feature(self):
+        key_columns = ["ACCESSION_NUMBER"]
+        feature_columns = ['gift', 'distribution', 'charity', 'price',
+                           'number', 'ball', 'pursuant', '10b5-1', '16b-3']
+        
+        data_to_merge = footnote_feature.create_features()
+        
+        self.__merge_features(data_to_merge, key_columns, feature_columns)
+    
+################################################################################
+# Create Graph features
+################################################################################
+
+    def __create_graph_features(self):
+        key_columns = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;"] # removed "TRANS_DATE"
+        feature_columns = ["lobbyist_score_final", "total_senate_connections", "total_house_connections", "combined_seniority_score", "PI_combined_total"]
+        
+        data_to_merge = graph_feature.create_features()
+        data_to_merge['TRANS_DATE'] = pd.to_datetime(data_to_merge['TRANS_DATE'])
+        self.__merge_features(data_to_merge, key_columns, feature_columns)
+
+
+################################################################################
+# Create Other features
+################################################################################
+
+    def __create_other_features(self):
+        key_columns = ["ACCESSION_NUMBER", "TRANS_SK"]
+        feature_columns = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", "relative_trade_size_to_others", 'trans_amt', "security_category"]
+        
+        data_to_merge = other_feature.create_features()
+        
+        self.__merge_features(data_to_merge, key_columns, feature_columns)
+    
+
+################################################################################
+# Auto merge features
+################################################################################  
+
+    def __merge_features(self, data_to_merge, key_columns, feature_columns):
+        data = pd.merge(
+            self.data,
+            data_to_merge[key_columns + feature_columns],
+            on = key_columns,
+            how = "left"
+        )
+        
+        if data.shape[0] != self.initial_rows:
+            print("Rows mismatch after merging, new, old: ", data.shape[0], self.initial_rows)
+        
+        self.data = data

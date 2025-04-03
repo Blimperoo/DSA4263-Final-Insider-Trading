@@ -3,6 +3,7 @@ import numpy as np
 import os
 from tqdm import tqdm
 
+
 from create_data import folder_location
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
@@ -196,21 +197,16 @@ def create_features():
         df_form4 = df_form4[columns_need].copy()
 
         grouped_form4 = df_form4.groupby("RPTOWNERNAME_;")
-
-        results = []
-
+        
         # Batching by reporting owner
         for insider, insider_df in tqdm(grouped_form4, desc="Processing insiders"):
-            merged = pd.merge(
+            merged_for_features = pd.merge(
                 insider_df,
                 merged_entity,
                 left_on="RPTOWNERNAME_;",
                 right_on="form4",
                 how="inner"
             )
-
-        merged_for_features = pd.concat(results, ignore_index=True)
-
         merged_for_features = merged_for_features.drop_duplicates()
 
         ##############################
