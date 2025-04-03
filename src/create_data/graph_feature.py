@@ -8,7 +8,7 @@ PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 ABNORMAL_CSV = folder_location.ABNORMAL_CSV
 MERGED_RELATIONSHIP_FILE = folder_location.MERGED_RELATIONSHIP_FILE
 
-FINAL_FOLDER = folder_location.PROCESSED_DATA_FOLDER
+FEATURES_FOLDER = folder_location.FEATURES_DATA_FOLDER
 FINAL_FILE = "graph_feature.csv"
 
 def create_features():
@@ -17,12 +17,12 @@ def create_features():
     Returns:
         Dataframe: of features
     """
-    current_compiled_files = os.listdir(FINAL_FOLDER)
+    current_compiled_files = os.listdir(FEATURES_FOLDER)
     
     # Checks if the file is found
     if FINAL_FILE in current_compiled_files:
         print("=== Graph Key file is found. Extracting ===")
-        df_to_return = pd.read_csv(f'{FINAL_FOLDER}/{FINAL_FILE}', parse_dates=['TRANS_DATE'])
+        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}', parse_dates=['TRANS_DATE'])
     else: # Create features and save
         print("=== Graph Key file not found, begin creating  ===")
         
@@ -170,7 +170,7 @@ def create_features():
         df_form4 = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}')
 
         # Only looking at 1 RPTOWNER for now
-        df_form4 = df_form4[df_form4['NUM_RPTOWNERCIK_;'] == 1]
+        df_form4 = df_form4[df_form4['NUM_RPTOWNERCIK'] == 1]
 
         # Include columns as needed 
         columns_need = ['ACCESSION_NUMBER', 'TRANS_SK', 'TRANS_DATE', 'RPTOWNERNAME_;']
@@ -553,7 +553,7 @@ def create_features():
 
 
         df_to_save = final_summary[features_to_keep + key]
-        df_to_save.to_csv(f'{FINAL_FOLDER}/{FINAL_FILE}')
+        df_to_save.to_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}')
         df_to_return = df_to_save
 
     return df_to_return
