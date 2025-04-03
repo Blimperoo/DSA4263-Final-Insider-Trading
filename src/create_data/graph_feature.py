@@ -6,6 +6,7 @@ from create_data import folder_location
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 ABNORMAL_CSV = folder_location.ABNORMAL_CSV
+MERGED_RELATIONSHIP_FILE = folder_location.MERGED_RELATIONSHIP_FILE
 
 FINAL_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 FINAL_FILE = "graph_feature.csv"
@@ -136,7 +137,7 @@ def create_features():
         ]
 
         # Load the CSV file
-        df_relationships = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/merged_relationships_full.csv")
+        df_relationships = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/{MERGED_RELATIONSHIP_FILE}")
 
         # Drop the specified columns
         df_relationships = df_relationships.drop(columns=cols_to_drop, errors='ignore')
