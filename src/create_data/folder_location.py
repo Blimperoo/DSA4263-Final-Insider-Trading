@@ -10,6 +10,7 @@ ABNORMAL_CSV = 'merged_txns_SNORKEL.csv'
 # Features folder
 #####################
 FEATURES_DATA_FOLDER = '../data_untracked/features'
+MERGED_RELATIONSHIP_FILE = 'merged_relationships_full.csv'
 
 #####################
 # SEC folder
