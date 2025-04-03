@@ -2,10 +2,12 @@ import pandas as pd
 import numpy as np
 import os
 
-PROCESSED_DATA_FOLDER = "../data_untracked/processed"
-ABNORMAL_CSV = "snorkel_labels.csv"
+from create_data import folder_location
 
-FINAL_FOLDER = "../data_untracked/features"
+PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
+ABNORMAL_CSV = folder_location.ABNORMAL_CSV
+
+FINAL_FOLDER = folder_location.FEATURES_DATA_FOLDER
 FINAL_FILE = "other_feature.csv"
 
 def create_features():
