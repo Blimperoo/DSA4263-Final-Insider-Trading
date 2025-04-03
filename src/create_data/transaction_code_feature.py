@@ -2,10 +2,11 @@ import pandas as pd
 import numpy as np
 import os
 
-PROCESSED_DATA_FOLDER = "../data_untracked/processed"
-ABNORMAL_CSV = "snorkel_labels.csv"
+from create_data import folder_location
+PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
+ABNORMAL_CSV = folder_location.ABNORMAL_CSV
 
-FINAL_FOLDER = "../data_untracked/features"
+FINAL_FOLDER = folder_location.FEATURES_DATA_FOLDER
 FINAL_FILE = "transaction_code.csv"
 
 def create_features():
@@ -28,17 +29,22 @@ def create_features():
         abnormal_transactions = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}')[["ACCESSION_NUMBER", "TRANS_SK", "TRANS_CODE", "TRANS_ACQUIRED_DISP_CD", "snorkel_prob", "snorkel_pred"]]
         abnormal_transactions = abnormal_transactions.rename(columns={"snorkel_prob" : "probability", "snorkel_pred" : "prediction"})
         df_features = abnormal_transactions.copy()
+        
+        ##############################
+        # Sell
+        ##############################
 
-        ##############################
-        # Sell features
-        ##############################
         ## Create a binary variable to extract Transcode = J and Trans Acquired = D which means J code and sell
         df_features["js_bin"] = np.where((df_features["TRANS_ACQUIRED_DISP_CD"].str.upper() == "D") & (df_features["TRANS_CODE"].str.upper() == "J"), 1, 0)
 
         ## Create a binary variable to extract Transcode Not J or S but Trans Acquired = D which is sell but non S or J coded
         df_features["os_bin"] = np.where((~df_features["TRANS_CODE"].str.upper().isin(["S", "J"])) & (df_features["TRANS_ACQUIRED_DISP_CD"].str.upper() == "D"), 1, 0)
+
+        ## Create a binary variable to extract Transcode = S which is sell and Acquired disp cd = D (Regular Sell)
+        df_features["s_bin"] = np.where((df_features["TRANS_CODE"].str.upper() == "S") & (df_features["TRANS_ACQUIRED_DISP_CD"].str.upper() == "D" ), 1, 0)
+
         ##############################
-        # Buy features
+        # Buy
         ##############################
 
         ## Create a binary variable to extract Transcode = P which is Buy and Acquired disp cd = A (Regular Sell)
@@ -46,11 +52,21 @@ def create_features():
 
         ## Create a binary variable to extract Transcode = J and Trans Acquired = A which means J code and buy
         df_features["jb_bin"] = np.where((df_features["TRANS_ACQUIRED_DISP_CD"].str.upper() == "A") & (df_features["TRANS_CODE"].str.upper() == "J"), 1, 0)
+
+        ## Create a binary variable to extract Transcode Not J or P but Trans Acquired = A which is buy but non P or J coded
+        df_features["ob_bin"] = np.where((~df_features["TRANS_CODE"].str.upper().isin(["P", "J"])) & (df_features["TRANS_ACQUIRED_DISP_CD"].str.upper() == "A"), 1, 0)
+
+        ##############################
+        # GIFTS
+        ##############################
+
+        ## Create a binary variable to extract if Transcode = G which is a gift or not
+        df_features["g_bin"] = np.where(df_features["TRANS_CODE"].str.upper() == "G", 1, 0)
         
         ##############################
         # Save file
         ##############################
-        features_to_keep = ["js_bin", "b_bin", "jb_bin", "os_bin"]
+        features_to_keep = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'g_bin']
         key = ["ACCESSION_NUMBER", "TRANS_SK"]
 
         df_to_save = df_features[features_to_keep + key]

@@ -38,7 +38,7 @@ class Feature_Data_Creator:
     def _create_transaction_code(self):
         
         key_columns = ["ACCESSION_NUMBER", "TRANS_SK"]
-        feature_columns = ["js_bin", "b_bin", "jb_bin", "os_bin"]
+        feature_columns = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'g_bin']
         
         data_to_merge = transaction_code_feature.create_features()
         
@@ -51,7 +51,8 @@ class Feature_Data_Creator:
 
     def __create_footnote_feature(self):
         key_columns = ["ACCESSION_NUMBER"]
-        feature_columns = ["distribution", "sell", "trading", "10b5-1", "16b-3"]
+        feature_columns = ['gift', 'distribution', 'charity', 'price',
+                           'number', 'ball', 'pursuant', '10b5-1', '16b-3']
         
         data_to_merge = footnote_feature.create_features()
         

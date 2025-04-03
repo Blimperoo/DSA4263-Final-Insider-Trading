@@ -9,13 +9,15 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 from nltk import pos_tag
 
-PROCESSED_DATA_FOLDER = "../data_untracked/processed"
-ABNORMAL_CSV = "snorkel_labels.csv"
+from create_data import folder_location
 
-SEC_DATA_FOLDER = "../data_untracked/raw/sec_submissions/compiled"
-FOOTNOTE_FILE = "FOOTNOTES.csv"
+PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
+ABNORMAL_CSV = folder_location.ABNORMAL_CSV
 
-FINAL_FOLDER = "../data_untracked/features"
+SEC_DATA_FOLDER = folder_location.SEC_DATA_FOLDER
+FOOTNOTE_FILE = folder_location.FOOTNOTE_FILE
+
+FINAL_FOLDER = folder_location.FEATURES_DATA_FOLDER
 FINAL_FILE = "footnote_word_count_feature.csv"
 
 # Lemmatizer used in tagging and lemmatizing words
@@ -24,6 +26,9 @@ LEMMATIZER = WordNetLemmatizer()
 # Stop words to remove common words that appear
 STOP_WORDS = set(stopwords.words("english"))
 STOP_WORDS.update(["shall", "should"])
+
+TEXT_LIST = ['gift', 'distribution', 'charity', 'price', 'number', 'ball', 'pursuant']
+TEXT_CODE = ['10b5-1', '16b-3']
 
 
 def create_features():
@@ -65,16 +70,16 @@ def create_features():
         # Count instances of words
         ##############################
         
-        text_list = ["distribution", "sell", "trading"]
-        text_code = ["10b5-1", "16b-3"]
+        # text_list = ["distribution", "sell", "trading"]
+        # text_code = ["10b5-1", "16b-3"]
         print("=== create processed footnotes ===")
         df_grouped["processed"] = df_grouped["FOOTNOTE_TXT"].apply(lambda row: preprocess_text(row))
         
-        for text in text_list:
+        for text in TEXT_LIST:
             print(f"Creating feature for {text}")
             df_grouped[text] = df_grouped["processed"].str.count(preprocess_text(text))
         
-        for code in text_code:
+        for code in TEXT_CODE:
             print(f"Creating feature for {code}")
             df_grouped[code] = df_grouped["FOOTNOTE_TXT"].str.count(code)
         
@@ -82,7 +87,7 @@ def create_features():
         # Save key file
         ##############################
         
-        features_to_keep = text_list + text_code
+        features_to_keep = TEXT_LIST + TEXT_CODE
         key = ["ACCESSION_NUMBER"]
         
         df_to_save = df_grouped[features_to_keep + key]
