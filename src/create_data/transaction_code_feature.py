@@ -6,7 +6,7 @@ from create_data import folder_location
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 ABNORMAL_CSV = folder_location.ABNORMAL_CSV
 
-FINAL_FOLDER = folder_location.FEATURES_DATA_FOLDER
+FEATURES_FOLDER = folder_location.FEATURES_DATA_FOLDER
 FINAL_FILE = "transaction_code.csv"
 
 def create_features():
@@ -15,13 +15,13 @@ def create_features():
     Returns:
         Dataframe: of features
     """
-    current_compiled_files = os.listdir(FINAL_FOLDER)
+    current_compiled_files = os.listdir(FEATURES_FOLDER)
     # print(current_compiled_files)
     
     # Checks if the file is found
     if FINAL_FILE in current_compiled_files:
         print("=== Transaction Key file is found. Extracting ===")
-        df_to_return = pd.read_csv(f'{FINAL_FOLDER}/{FINAL_FILE}')
+        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}')
     else: # Create features and save
         print("=== Transaction Key file not found, begin creating  ===")
         
@@ -70,7 +70,7 @@ def create_features():
         key = ["ACCESSION_NUMBER", "TRANS_SK"]
 
         df_to_save = df_features[features_to_keep + key]
-        df_to_save.to_csv(f'{FINAL_FOLDER}/{FINAL_FILE}')
+        df_to_save.to_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}')
         df_to_return = df_to_save
 
     return df_to_return
