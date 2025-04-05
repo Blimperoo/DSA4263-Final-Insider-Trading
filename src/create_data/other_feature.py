@@ -97,7 +97,7 @@ def create_features():
                                                            ).replace([np.inf, -np.inf], np.nan)
 
         ##############################
-        # other simple features
+        # security category
         ##############################
         trans_score_df['trans_amt'] = trans_score_df['TRANS_SHARES'] * trans_score_df['TRANS_PRICEPERSHARE']
         def categorize_security(desc):
@@ -120,9 +120,46 @@ def create_features():
         trans_score_df["security_category"] = trans_score_df["SECURITY_TITLE"].apply(categorize_security)
 
         ##############################
+        # nature_of_ownership
+        ##############################
+        def map_nature_of_ownership_score(text):
+            """
+            Maps the NATURE_OF_OWNERSHIP field into a numeric signal score (0–5),
+            based on how directly the person is tied to the ownership.
+            
+            Returns:
+                int: signal strength score, defaulting to 0 if unknown.
+            """
+
+            if pd.isna(text):
+                return 0  # Treat NA as lowest signal
+
+            text = text.lower()
+
+            # Ordered mapping from strongest to weakest signal
+            signal_map = [
+                (["direct", "self", "own", "sole"], 5),              # Direct ownership
+                (["spouse", "wife", "husband", "joint"], 4),         # Family (spouse, joint, children)
+                (["ira", "401(k)", "retirement", "custodian"], 3),   # Retirement accounts or custodians
+                (["revocable trust", "living trust", "trustee"], 2), # Revocable trusts (moderate control)
+                (["irrevocable", "grat", "foundation", "charitable"], 1), # Complex/charitable trusts
+                (["llc", "lp", "corp", "company", "fund", "partners"], 0), # Entity-level holding
+                (["footnote", "note"], 0),                           # Vague / unclear
+            ]
+
+            for keywords, score in signal_map:
+                if any(keyword in text for keyword in keywords):
+                    return score
+
+            return 0  # Default fallback for anything else
+
+        trans_score_df['beneficial_ownership_score'] = trans_score_df['NATURE_OF_OWNERSHIP'].apply(map_nature_of_ownership_score)
+
+        ##############################
         # Save file
         ##############################
-        features_to_keep = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", "relative_trade_size_to_others", "trans_amt", "security_category"]
+        features_to_keep = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", 
+                            "relative_trade_size_to_others", "trans_amt", "security_category","beneficial_ownership_score"]
         key = ["ACCESSION_NUMBER", "TRANS_SK"]
 
         df_to_save = trans_score_df[features_to_keep + key]
