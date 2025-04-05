@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 
-from create_data import folder_location
+from path_location import folder_location
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 ABNORMAL_CSV = folder_location.ABNORMAL_CSV
