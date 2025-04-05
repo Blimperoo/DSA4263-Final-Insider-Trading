@@ -17,7 +17,7 @@ mkdir -p data_untracked/raw/sec_submissions/interim \
     ### UPDATE HERE 
 
 3. Create folders according to diagram below and place the downloaded datasets in the respective folders.
-   ```{bash}
+   ```
          data_untracked/
          ├── raw/
          │   ├── sec_submissions/
@@ -52,15 +52,15 @@ mkdir -p data_untracked/raw/sec_submissions/interim \
          │   └── profile_data/                         # Other firm or insider profile information
          │
          ├── processed/
-         │   ├── transactions_final.csv                                # Cleaned + merged transaction-level data (3546490, 24)
-         │   ├── transactions_abnormal_returns.csv                     # Includes AR and expected returns (3171001, 46)
-         │   ├── transactions_abnormal_returns_anomaly_score.csv       # Adds anomaly score features (3171001, 83)
-         │   ├── merged_txns_SNORKEL.csv                               # Weak labels from Snorkel labeling functions
+         │   ├── transactions_final.csv                                # Merged transaction data from SEC Form 4 (3546490, 24)
+         │   ├── transactions_abnormal_returns.csv                     # Transactions with calculated abnormal returns (3171001, 46)
+         │   ├── transactions_abnormal_returns_anomaly_score.csv       # Adds anomaly score partial labels (3171001, 83)
+         │   ├── merged_txns_SNORKEL.csv                               # Adds labels from Snorkel labeling functions
          │   ├── name_matched_improved.csv                             # Form 4 to LittleSis Name Match
-         │   ├── merged_relationships_full.csv
-         │   └── ground_truth_matching_keys.csv
+         │   ├── merged_relationships_full.csv                         # Network data
+         │   └── ground_truth_matching_keys.csv                        # Ground truth transactions caught and flagged by SEC
          │
-         ├── features/                                                 # Network data
+         ├── features/                                                 
          │   ├── footnote_word_count_feature.csv
          │   ├── other_feature.csv
          │   ├── transaction_code.csv
