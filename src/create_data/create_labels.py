@@ -12,10 +12,11 @@ from tqdm.notebook import tqdm
 import dask
 dask.config.set(scheduler='threads')
 
+from path_location import folder_location
 
-PROCESSED_DATA_FOLDER = '../data_untracked/processed'
+PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 
-FINAL_FILE = 'snorkel_labels.csv'
+FINAL_FILE = folder_location.ABNORMAL_CSV
 
 class Label_Data_Creator:
     def __init__(self):

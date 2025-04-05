@@ -6,11 +6,14 @@ from create_data import transaction_code_feature
 from create_data import graph_feature
 from create_data import footnote_feature
 from create_data import other_feature
-from create_data import folder_location
+
+from path_location import folder_location
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 
 FEATURES_DATA_FOLDER = folder_location.FEATURES_DATA_FOLDER
+
+FINAL_FEATURES_FILE = folder_location.FULL_FEATURES_FILE
 
 FINAL_FILE = folder_location.ABNORMAL_CSV
 
@@ -21,17 +24,29 @@ class Feature_Data_Creator:
         self.features = []
     
     def create_features(self):
-        ## Creates transaction code features
-        self._create_transaction_code()
+        ## If full features file exist:
+        processed_folder = os.listdir(PROCESSED_DATA_FOLDER)
         
-        ## Creates footnotes features
-        self.__create_footnote_feature()
+        if (FINAL_FEATURES_FILE in processed_folder):
+            print("=== Final features file present ===")
+            self.__load_data_frame()
+        else:
+            print("=== Final features file not found. Begin creating ===")
         
-        ## Create graph features
-        self.__create_graph_features()
-        
-        ## Create other features
-        self.__create_other_features()
+            ## Creates transaction code features
+            self._create_transaction_code()
+            
+            ## Creates footnotes features
+            self.__create_footnote_feature()
+            
+            ## Create graph features
+            self.__create_graph_features()
+            
+            ## Create other features
+            self.__create_other_features()
+            
+            print("=== Saving file ===")
+            self.__save_data_frame()
 
 ################################################################################
 # Create transaction code
@@ -104,3 +119,34 @@ class Feature_Data_Creator:
         self.features.extend(feature_columns)
         
         self.data = data
+        
+################################################################################
+# Save DF
+################################################################################ 
+
+    def __save_data_frame(self):
+        """saves the data frame with a prefix: feature_
+        """
+        features_naming = list(map(lambda x: "feature_" + x, self.features))
+        feature_name_mapping = dict(zip(self.features, features_naming))
+        
+        data_to_save = self.data.rename(columns=feature_name_mapping)
+        data_to_save.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}')
+    
+################################################################################
+# Load DF
+################################################################################
+
+    def __load_data_frame(self):
+        """loads data frame and extract features with prefix: feature_
+        """
+        load_data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', parse_dates=['TRANS_DATE'])
+        
+        features = list(load_data.columns[load_data.columns.str.contains('feature_')])
+        features_cleaned = [feature.replace('feature_', '') for feature in features]
+        feature_name_mapping = dict(zip(features, features_cleaned))
+        
+        self.features.extend(features_cleaned)
+        
+        cleaned_data = load_data.rename(columns=feature_name_mapping)
+        self.data = cleaned_data

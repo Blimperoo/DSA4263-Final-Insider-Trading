@@ -9,7 +9,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 from nltk import pos_tag
 
-from create_data import folder_location
+from path_location import folder_location
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 ABNORMAL_CSV = folder_location.ABNORMAL_CSV
@@ -17,7 +17,7 @@ ABNORMAL_CSV = folder_location.ABNORMAL_CSV
 SEC_DATA_FOLDER = folder_location.SEC_DATA_FOLDER
 FOOTNOTE_FILE = folder_location.FOOTNOTE_FILE
 
-FINAL_FOLDER = folder_location.FEATURES_DATA_FOLDER
+FEATURES_FOLDER = folder_location.FEATURES_DATA_FOLDER
 FINAL_FILE = "footnote_word_count_feature.csv"
 
 # Lemmatizer used in tagging and lemmatizing words
@@ -37,13 +37,13 @@ def create_features():
     Returns:
         Dataframe: of features
     """
-    current_compiled_files = os.listdir(FINAL_FOLDER)
+    current_compiled_files = os.listdir(FEATURES_FOLDER)
     current_compiled_sec_submissions = os.listdir(SEC_DATA_FOLDER)
     
     # Checks if the file is found
     if FINAL_FILE in current_compiled_files:
         print("=== Footnote Key file is found. Extracting ===")
-        df_to_return = pd.read_csv(f'{FINAL_FOLDER}/{FINAL_FILE}')
+        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}')
     
     # Creates the footnote compilation
     elif FOOTNOTE_FILE in current_compiled_sec_submissions:
@@ -96,7 +96,7 @@ def create_features():
         for feature in features_to_keep:
             df_to_save[feature] = df_to_save[feature].fillna(0)
         
-        df_to_save.to_csv(f'{FINAL_FOLDER}/{FINAL_FILE}')
+        df_to_save.to_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}')
         df_to_return = df_to_save
         
         
