@@ -1,6 +1,15 @@
 import pandas as pd
 import numpy as np
+import sys
 import os
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+if script_dir not in sys.path:
+    sys.path.insert(0, script_dir)
+    
+parent_dir = os.path.dirname(os.path.abspath(f'{__file__}/..'))
+if parent_dir not in sys.path:
+    sys.path.insert(1, parent_dir)
 
 from path_location import folder_location
 

@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import re
+import sys
 import os
 
 from nltk.corpus import stopwords
@@ -8,6 +9,14 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
 from nltk import pos_tag
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+if script_dir not in sys.path:
+    sys.path.insert(0, script_dir)
+    
+parent_dir = os.path.dirname(os.path.abspath(f'{__file__}/..'))
+if parent_dir not in sys.path:
+    sys.path.insert(1, parent_dir)
 
 from path_location import folder_location
 
