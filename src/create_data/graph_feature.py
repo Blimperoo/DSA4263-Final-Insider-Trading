@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import os
+from tqdm import tqdm
+
 
 from path_location import folder_location
 
@@ -195,14 +197,17 @@ def create_features():
 
         df_form4 = df_form4[columns_need].copy()
 
-        merged_for_features = pd.merge(
-            df_form4,
-            merged_entity,
-            left_on='RPTOWNERNAME_;',
-            right_on='form4',
-            how='inner'  #we only care about those with relations for now
-        )
-
+        grouped_form4 = df_form4.groupby("RPTOWNERNAME_;")
+        
+        # Batching by reporting owner
+        for insider, insider_df in tqdm(grouped_form4, desc="Processing insiders"):
+            merged_for_features = pd.merge(
+                insider_df,
+                merged_entity,
+                left_on="RPTOWNERNAME_;",
+                right_on="form4",
+                how="inner"
+            )
         merged_for_features = merged_for_features.drop_duplicates()
 
         ##############################
