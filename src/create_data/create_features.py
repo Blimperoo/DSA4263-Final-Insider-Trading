@@ -1,16 +1,28 @@
 import numpy as np
 import pandas as pd
+import sys
 import os
 
-from create_data import transaction_code_feature
-from create_data import graph_feature
-from create_data import footnote_feature
-from create_data import other_feature
-from create_data import folder_location
+script_dir = os.path.dirname(os.path.abspath(__file__))
+if script_dir not in sys.path:
+    sys.path.insert(script_dir)
+    
+parent_dir = os.path.dirname(os.path.abspath(f'{__file__}/..'))
+if parent_dir not in sys.path:
+    sys.path.insert(parent_dir)
+
+import transaction_code_feature
+import graph_feature
+import footnote_feature
+import other_feature
+
+from path_location import folder_location
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 
 FEATURES_DATA_FOLDER = folder_location.FEATURES_DATA_FOLDER
+
+FINAL_FEATURES_FILE = folder_location.FULL_FEATURES_FILE
 
 FINAL_FILE = folder_location.ABNORMAL_CSV
 
@@ -18,29 +30,50 @@ class Feature_Data_Creator:
     def __init__(self):
         self.data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FILE}', parse_dates=['TRANS_DATE'])
         self.initial_rows = self.data.shape[0]
-        self.features = []
+        
+        self.transaction_code_features = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'g_bin']
+        self.footnote_features = ['gift', 'distribution', 'charity', 'price', 'number', 'ball', 'pursuant', '10b5-1', '16b-3']
+        self.graph_features = ['lobbyist_score_final', 'total_senate_connections', 'total_house_connections', 'combined_seniority_score', 'PI_combined_total']
+        self.other_features = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'relative_trade_size_to_others']
+        
+        ## Combined features
+        self.features = self.transaction_code_features + self.footnote_features + self.graph_features + self.other_features
     
     def create_features(self):
-        ## Creates transaction code features
-        self._create_transaction_code()
+        """ Loads feature csv file if exists. Else start creating and saving
+        """
+        ## If full features file exist:
+        processed_folder = os.listdir(PROCESSED_DATA_FOLDER)
         
-        ## Creates footnotes features
-        self.__create_footnote_feature()
+        if (FINAL_FEATURES_FILE in processed_folder):
+            print("=== Final features file present ===")
+            self.__load_data_frame()
+        else:
+            print("=== Final features file not found. Begin creating ===")
         
-        ## Create graph features
-        self.__create_graph_features()
-        
-        ## Create other features
-        self.__create_other_features()
+            ## Creates transaction code features
+            self.__create_transaction_code_features()
+            
+            ## Creates footnotes features
+            self.__create_footnote_features()
+            
+            ## Create graph features
+            self.__create_graph_features()
+            
+            ## Create other features
+            self.__create_other_features()
+            
+            print("=== Saving file ===")
+            self.__save_data_frame()
 
 ################################################################################
 # Create transaction code
 ################################################################################
 
-    def _create_transaction_code(self):
+    def __create_transaction_code_features(self):
         
         key_columns = ["ACCESSION_NUMBER", "TRANS_SK"]
-        feature_columns = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'g_bin']
+        feature_columns = self.transaction_code_features
         
         data_to_merge = transaction_code_feature.create_features()
         
@@ -51,10 +84,9 @@ class Feature_Data_Creator:
 # Create Footnote features
 ################################################################################
 
-    def __create_footnote_feature(self):
+    def __create_footnote_features(self):
         key_columns = ["ACCESSION_NUMBER"]
-        feature_columns = ['gift', 'distribution', 'charity', 'price',
-                           'number', 'ball', 'pursuant', '10b5-1', '16b-3']
+        feature_columns = self.footnote_features
         
         data_to_merge = footnote_feature.create_features()
         
@@ -66,7 +98,7 @@ class Feature_Data_Creator:
 
     def __create_graph_features(self):
         key_columns = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;"] # removed "TRANS_DATE"
-        feature_columns = ["lobbyist_score_final", "total_senate_connections", "total_house_connections", "combined_seniority_score", "PI_combined_total"]
+        feature_columns = self.graph_features
         
         data_to_merge = graph_feature.create_features()
         data_to_merge['TRANS_DATE'] = pd.to_datetime(data_to_merge['TRANS_DATE'])
@@ -79,7 +111,7 @@ class Feature_Data_Creator:
 
     def __create_other_features(self):
         key_columns = ["ACCESSION_NUMBER", "TRANS_SK"]
-        feature_columns = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", "relative_trade_size_to_others"]
+        feature_columns = self.other_features
         
         data_to_merge = other_feature.create_features()
         
@@ -104,3 +136,22 @@ class Feature_Data_Creator:
         self.features.extend(feature_columns)
         
         self.data = data
+        
+################################################################################
+# Save DF
+################################################################################ 
+
+    def __save_data_frame(self):
+        """ saves the data frame in PROCESSED_DATA_FOLDER
+        """
+        self.data.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}')
+    
+################################################################################
+# Load DF
+################################################################################
+
+    def __load_data_frame(self):
+        """loads data frame from PROCESSED_DATA_FOLDER
+        """
+        load_data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', parse_dates=['TRANS_DATE'])
+        self.data = load_data

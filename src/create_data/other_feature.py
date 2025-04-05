@@ -1,8 +1,17 @@
 import pandas as pd
 import numpy as np
+import sys
 import os
 
-from create_data import folder_location
+script_dir = os.path.dirname(os.path.abspath(__file__))
+if script_dir not in sys.path:
+    sys.path.insert(0, script_dir)
+    
+parent_dir = os.path.dirname(os.path.abspath(f'{__file__}/..'))
+if parent_dir not in sys.path:
+    sys.path.insert(1, parent_dir)
+
+from path_location import folder_location
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 ABNORMAL_CSV = folder_location.ABNORMAL_CSV

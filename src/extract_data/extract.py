@@ -10,9 +10,11 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import json
 
+from path_location import folder_location
 
-RAW_DATA_FOLDER = '../data_untracked/raw/sec_submissions'
-PROCESSED_FOLDER = '../data_untracked/processed'
+
+RAW_DATA_FOLDER = folder_location.SEC_SUBMISSIONS_FOLDER
+PROCESSED_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 
 # URL for SEC data
 URL = "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets"

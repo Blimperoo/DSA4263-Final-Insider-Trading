@@ -1,7 +1,3 @@
-import os
-import glob
-import math
-import re
 import pandas as pd
 import numpy as np
 from numba import njit
@@ -10,12 +6,23 @@ from dask.distributed import Client
 from dask.diagnostics import ProgressBar
 from tqdm.notebook import tqdm
 import dask
+import sys
+import os
 dask.config.set(scheduler='threads')
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+if script_dir not in sys.path:
+    sys.path.append(script_dir)
+    
+parent_dir = os.path.dirname(os.path.abspath(f'{__file__}/..'))
+if parent_dir not in sys.path:
+    sys.path.append(parent_dir)
 
-PROCESSED_DATA_FOLDER = '../data_untracked/processed'
+from path_location import folder_location
 
-FINAL_FILE = 'snorkel_labels.csv'
+PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
+
+FINAL_FILE = folder_location.ABNORMAL_CSV
 
 class Label_Data_Creator:
     def __init__(self):
