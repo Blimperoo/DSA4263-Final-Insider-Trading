@@ -26,19 +26,59 @@ FINAL_FEATURES_FILE = folder_location.FULL_FEATURES_FILE
 
 FINAL_FILE = folder_location.ABNORMAL_CSV
 
+TRAINING_FILE = folder_location.TRAINING_FULL_FEATURES_FILE
+
+TESTING_FILE = folder_location.TESTING_FULL_FEATURES_FILE
+
+TRANSACTION_CODE_FEATURE = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'g_bin']
+FOOTNOTE_FEATURE = ['gift', 'distribution', 'charity', 'price', 'number', 'ball', 'pursuant', '10b5-1', '16b-3']
+GRAPH_FEATURE = ['lobbyist_score_final', 'total_senate_connections', 'total_house_connections', 'combined_seniority_score', 'PI_combined_total']
+OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'relative_trade_size_to_others']
+
+FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE
+
 class Feature_Data_Creator:
     def __init__(self):
         self.data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FILE}', parse_dates=['TRANS_DATE'])
         self.initial_rows = self.data.shape[0]
         
-        self.transaction_code_features = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'g_bin']
-        self.footnote_features = ['gift', 'distribution', 'charity', 'price', 'number', 'ball', 'pursuant', '10b5-1', '16b-3']
-        self.graph_features = ['lobbyist_score_final', 'total_senate_connections', 'total_house_connections', 'combined_seniority_score', 'PI_combined_total']
-        self.other_features = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'relative_trade_size_to_others']
+        self.transaction_code_features = TRANSACTION_CODE_FEATURE
+        self.footnote_features = FOOTNOTE_FEATURE
+        self.graph_features = GRAPH_FEATURE
+        self.other_features = OTHER_FEATURE
         
         ## Combined features
-        self.features = self.transaction_code_features + self.footnote_features + self.graph_features + self.other_features
-    
+        self.features = FEATURES
+
+################################################################################
+# Create training and testing data
+################################################################################
+
+    def create_training_testing(self, quantile = 0.70):
+        """ Creates training and testing split by transaction date based on quantile
+        """
+        features_folder = os.listdir(PROCESSED_DATA_FOLDER)
+        
+        if (TRAINING_FILE not in features_folder) or (TESTING_FILE not in features_folder):
+            print(f"=== Training or Testing file not found. Begin creating based on quantile: {quantile}")
+            curr_data = self.data.copy()
+            date_to_split = curr_data['TRANS_DATE'].quantile(quantile)
+            
+            training_data = curr_data[curr_data['TRANS_DATE'] < date_to_split]
+            testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split]
+            
+            print("=== Saving Training and Testing ===")
+            training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TRAINING_FILE}")
+            testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TESTING_FILE}")
+        else:
+            print("=== Training and Testing file present ===")
+            self.data.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}')
+
+
+################################################################################
+# Create features
+################################################################################
+
     def create_features(self):
         """ Loads feature csv file if exists. Else start creating and saving
         """
@@ -47,7 +87,8 @@ class Feature_Data_Creator:
         
         if (FINAL_FEATURES_FILE in processed_folder):
             print("=== Final features file present ===")
-            self.__load_data_frame()
+            load_data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', parse_dates=['TRANS_DATE'])
+            self.data = load_data
         else:
             print("=== Final features file not found. Begin creating ===")
         
@@ -64,10 +105,10 @@ class Feature_Data_Creator:
             self.__create_other_features()
             
             print("=== Saving file ===")
-            self.__save_data_frame()
+            self.data.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}')
 
 ################################################################################
-# Create transaction code
+# Create transaction code features
 ################################################################################
 
     def __create_transaction_code_features(self):
@@ -136,22 +177,3 @@ class Feature_Data_Creator:
         self.features.extend(feature_columns)
         
         self.data = data
-        
-################################################################################
-# Save DF
-################################################################################ 
-
-    def __save_data_frame(self):
-        """ saves the data frame in PROCESSED_DATA_FOLDER
-        """
-        self.data.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}')
-    
-################################################################################
-# Load DF
-################################################################################
-
-    def __load_data_frame(self):
-        """loads data frame from PROCESSED_DATA_FOLDER
-        """
-        load_data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', parse_dates=['TRANS_DATE'])
-        self.data = load_data

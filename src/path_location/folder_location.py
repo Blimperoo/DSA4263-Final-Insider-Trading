@@ -6,6 +6,8 @@ import os
 PROCESSED_DATA_FOLDER = '../../data_untracked/processed'
 ABNORMAL_CSV = 'merged_txns_SNORKEL.csv'
 FULL_FEATURES_FILE = 'full_features.csv'
+TRAINING_FULL_FEATURES_FILE = 'training_full_features.csv'
+TESTING_FULL_FEATURES_FILE = 'testing_full_features.csv'
 
 #####################
 # Features folder
