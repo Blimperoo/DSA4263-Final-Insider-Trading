@@ -5,11 +5,11 @@ import os
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
-    sys.path.insert(script_dir)
+    sys.path.append(script_dir)
     
 parent_dir = os.path.dirname(os.path.abspath(f'{__file__}/..'))
 if parent_dir not in sys.path:
-    sys.path.insert(parent_dir)
+    sys.path.append(parent_dir)
 
 import transaction_code_feature
 import graph_feature
@@ -34,7 +34,7 @@ class Feature_Data_Creator:
         self.transaction_code_features = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'g_bin']
         self.footnote_features = ['gift', 'distribution', 'charity', 'price', 'number', 'ball', 'pursuant', '10b5-1', '16b-3']
         self.graph_features = ['lobbyist_score_final', 'total_senate_connections', 'total_house_connections', 'combined_seniority_score', 'PI_combined_total']
-        self.other_features = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'relative_trade_size_to_others']
+        self.other_features = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'relative_trade_size_to_others','beneficial_ownership_score']
         
         ## Combined features
         self.features = self.transaction_code_features + self.footnote_features + self.graph_features + self.other_features
