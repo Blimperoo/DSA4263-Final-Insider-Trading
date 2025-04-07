@@ -30,18 +30,25 @@ TRAINING_FILE = folder_location.TRAINING_FULL_FEATURES_FILE
 
 TESTING_FILE = folder_location.TESTING_FULL_FEATURES_FILE
 
+TRANSACTION_CODE_FEATURE = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'g_bin']
+FOOTNOTE_FEATURE = ['gift', 'distribution', 'charity', 'price', 'number', 'ball', 'pursuant', '10b5-1', '16b-3']
+GRAPH_FEATURE = ['lobbyist_score_final', 'total_senate_connections', 'total_house_connections', 'combined_seniority_score', 'PI_combined_total']
+OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'relative_trade_size_to_others']
+
+FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE
+
 class Feature_Data_Creator:
     def __init__(self):
         self.data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FILE}', parse_dates=['TRANS_DATE'])
         self.initial_rows = self.data.shape[0]
         
-        self.transaction_code_features = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'g_bin']
-        self.footnote_features = ['gift', 'distribution', 'charity', 'price', 'number', 'ball', 'pursuant', '10b5-1', '16b-3']
-        self.graph_features = ['lobbyist_score_final', 'total_senate_connections', 'total_house_connections', 'combined_seniority_score', 'PI_combined_total']
-        self.other_features = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'relative_trade_size_to_others']
+        self.transaction_code_features = TRANSACTION_CODE_FEATURE
+        self.footnote_features = FOOTNOTE_FEATURE
+        self.graph_features = GRAPH_FEATURE
+        self.other_features = OTHER_FEATURE
         
         ## Combined features
-        self.features = self.transaction_code_features + self.footnote_features + self.graph_features + self.other_features
+        self.features = FEATURES
 
 ################################################################################
 # Create training and testing data
