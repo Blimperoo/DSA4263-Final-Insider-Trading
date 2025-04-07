@@ -26,6 +26,10 @@ FINAL_FEATURES_FILE = folder_location.FULL_FEATURES_FILE
 
 FINAL_FILE = folder_location.ABNORMAL_CSV
 
+TRAINING_FILE = folder_location.TRAINING_FULL_FEATURES_FILE
+
+TESTING_FILE = folder_location.TESTING_FULL_FEATURES_FILE
+
 class Feature_Data_Creator:
     def __init__(self):
         self.data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FILE}', parse_dates=['TRANS_DATE'])
@@ -38,7 +42,36 @@ class Feature_Data_Creator:
         
         ## Combined features
         self.features = self.transaction_code_features + self.footnote_features + self.graph_features + self.other_features
-    
+
+################################################################################
+# Create training and testing data
+################################################################################
+
+    def create_training_testing(self, quantile = 0.70):
+        """ Creates training and testing split by transaction date based on quantile
+        """
+        features_folder = os.listdir(PROCESSED_DATA_FOLDER)
+        
+        if (TRAINING_FILE not in features_folder) or (TESTING_FILE not in features_folder):
+            print(f"=== Training or Testing file not found. Begin creating based on quantile: {quantile}")
+            curr_data = self.data.copy()
+            date_to_split = curr_data['TRANS_DATE'].quantile(quantile)
+            
+            training_data = curr_data[curr_data['TRANS_DATE'] < date_to_split]
+            testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split]
+            
+            print("=== Saving Training and Testing ===")
+            training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TRAINING_FILE}")
+            testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TESTING_FILE}")
+        else:
+            print("=== Training and Testing file present ===")
+            self.data.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}')
+
+
+################################################################################
+# Create features
+################################################################################
+
     def create_features(self):
         """ Loads feature csv file if exists. Else start creating and saving
         """
@@ -47,7 +80,8 @@ class Feature_Data_Creator:
         
         if (FINAL_FEATURES_FILE in processed_folder):
             print("=== Final features file present ===")
-            self.__load_data_frame()
+            load_data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', parse_dates=['TRANS_DATE'])
+            self.data = load_data
         else:
             print("=== Final features file not found. Begin creating ===")
         
@@ -64,10 +98,10 @@ class Feature_Data_Creator:
             self.__create_other_features()
             
             print("=== Saving file ===")
-            self.__save_data_frame()
+            self.data.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}')
 
 ################################################################################
-# Create transaction code
+# Create transaction code features
 ################################################################################
 
     def __create_transaction_code_features(self):
@@ -136,22 +170,3 @@ class Feature_Data_Creator:
         self.features.extend(feature_columns)
         
         self.data = data
-        
-################################################################################
-# Save DF
-################################################################################ 
-
-    def __save_data_frame(self):
-        """ saves the data frame in PROCESSED_DATA_FOLDER
-        """
-        self.data.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}')
-    
-################################################################################
-# Load DF
-################################################################################
-
-    def __load_data_frame(self):
-        """loads data frame from PROCESSED_DATA_FOLDER
-        """
-        load_data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', parse_dates=['TRANS_DATE'])
-        self.data = load_data
