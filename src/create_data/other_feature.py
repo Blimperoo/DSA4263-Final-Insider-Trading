@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import re
 import sys
 import os
 
@@ -131,37 +132,75 @@ def create_features():
         ##############################
         # nature_of_ownership
         ##############################
+        # Precompiled regex pattern
+        PATTERN_401K_PLAN = re.compile(r'(?i)401\s*[-\s]*[\(\)]*\s*k\s*[\(\)]*(\s*plan)?')
+        PATTERN_SPACE_AFTER_401K = re.compile(r'(?i)(401k)([a-z])')
+        PATTERN_SPOUSE_401K = re.compile(r'(?i)(spouse)(401k)')
+        PATTERN_ESOP = re.compile(r'(?i)\b[a-z]*esop\b')
+        PATTERN_CLEAN = re.compile(r'[^a-z0-9 ]')
+
         def map_nature_of_ownership_score(text):
             """
-            Maps the NATURE_OF_OWNERSHIP field into a numeric signal score (0–5),
-            based on how directly the person is tied to the ownership.
-            
-            Returns:
-                int: signal strength score, defaulting to 0 if unknown.
+            Maps the NATURE_OF_OWNERSHIP field into a numeric signal score (0–5).
+
+            Steps:
+            1. Normalizes variations of "401(k)" (allowing hyphens, spaces, parentheses, or an optional "plan")
+                using precompiled regex patterns.
+            2. Inserts a space if "401k" is attached to letters (e.g., "401kplan" -> "401k plan").
+            3. Normalizes ESOP variants (e.g., 'paesop', 'xaesop') to "esop".
+            4. Cleans the text by removing punctuation (non-alphanumeric except spaces), lowercases, and tokenizes.
+            5. Checks for multi-word phrases (searched in the entire cleaned text) and for single tokens 
+                (searched as substrings within each token) against a mapping.
+            6. Returns the highest score found.
             """
-
             if pd.isna(text):
-                return 0  # Treat NA as lowest signal
+                return 0
+            
+            text = text.strip()
 
-            text = text.lower()
+            # Normalize 401(k) variants:
+            text = PATTERN_401K_PLAN.sub(lambda m: "401k plan" if m.group(1) and m.group(1).strip().lower() == "plan" else "401k", text)
+            text = PATTERN_SPACE_AFTER_401K.sub(r'\1 \2', text)
+            text = PATTERN_SPOUSE_401K.sub(r'\1 \2', text)
+            
+            # Normalize ESOP variants to "esop"
+            text = PATTERN_ESOP.sub('esop', text)
+            
+            # Clean text: remove non-alphanumeric (except spaces), lowercase, and tokenize.
+            clean_text = PATTERN_CLEAN.sub(' ', text.lower())
+            tokens = clean_text.split()
 
-            # Ordered mapping from strongest to weakest signal
-            signal_map = [
-                (["direct", "self", "own", "sole"], 5),              # Direct ownership
-                (["spouse", "wife", "husband", "joint"], 4),         # Family (spouse, joint, children)
-                (["ira", "401(k)", "retirement", "custodian"], 3),   # Retirement accounts or custodians
-                (["revocable trust", "living trust", "trustee"], 2), # Revocable trusts (moderate control)
-                (["irrevocable", "grat", "foundation", "charitable"], 1), # Complex/charitable trusts
-                (["llc", "lp", "corp", "company", "fund", "partners"], 0), # Entity-level holding
-                (["footnote", "note"], 0),                           # Vague / unclear
+            # Define mapping groups: each tuple is (list of keywords/phrases, score)
+            mapping = [
+                (["direct", "self", "own", "sole"], 5),                   # Direct ownership
+                (["spouse", "wife", "husband", "joint", "son", "daughter", "child"], 4),  # Family-related
+                (["ira", "401k", "401k plan", "retirement", "custodian", "esop"], 3),       # Retirement accounts
+                (["revocable trust", "living trust", "trustee", "trust"], 2),  # Revocable trusts
+                (["irrevocable", "grat", "foundation", "charitable"], 1),   # Complex/charitable
+                (["llc", "lp", "corp", "company", "fund", "partners"], 0),    # Entity-level holding
+                (["footnote", "note"], 0),                                  # Vague/unclear
             ]
+            
+            scores = []
+            for keywords, score in mapping:
+                for keyword in keywords:
+                    if " " in keyword:
+                        # For multi-word phrases, check if the entire phrase is in the cleaned text.
+                        if keyword in clean_text:
+                            scores.append(score)
+                            break
+                    else:
+                        # For single tokens, check if any token contains the keyword as a substring.
+                        if any(keyword in token for token in tokens):
+                            scores.append(score)
+                            break
 
-            for keywords, score in signal_map:
-                if any(keyword in text for keyword in keywords):
-                    return score
+            if not scores:
+                return 0
+            
+            return max(scores)
 
-            return 0  # Default fallback for anything else
-
+        # Example usage: applying to the DataFrame column.
         trans_score_df['beneficial_ownership_score'] = trans_score_df['NATURE_OF_OWNERSHIP'].apply(map_nature_of_ownership_score)
 
         ##############################
