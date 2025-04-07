@@ -5,11 +5,11 @@ import os
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
-    sys.path.insert(script_dir)
+    sys.path.append(script_dir)
     
 parent_dir = os.path.dirname(os.path.abspath(f'{__file__}/..'))
 if parent_dir not in sys.path:
-    sys.path.insert(parent_dir)
+    sys.path.append(parent_dir)
 
 import transaction_code_feature
 import graph_feature
