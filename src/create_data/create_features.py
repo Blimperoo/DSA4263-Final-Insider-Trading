@@ -96,10 +96,10 @@ class Feature_Data_Creator:
             print("=== Final features file not found. Begin creating ===")
         
             ## Creates transaction code features
-            #self.__create_transaction_code_features()
+            self.__create_transaction_code_features()
             
             ## Creates footnotes features
-            #self.__create_footnote_features()
+            self.__create_footnote_features()
             
             ## Create graph features
             #self.__create_graph_features()
@@ -108,7 +108,7 @@ class Feature_Data_Creator:
             self.__create_network_features()
             
             ## Create other features
-            #self.__create_other_features()
+            self.__create_other_features()
             
             print("=== Saving file ===")
             self.data.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}')
@@ -190,6 +190,13 @@ class Feature_Data_Creator:
 ################################################################################  
 
     def __merge_features(self, data_to_merge, key_columns, feature_columns):
+
+        # EMILY TO REMOVE HARD CODED CHANGE AFTER ADDING SNORKEL LABEL PARTS
+        ################################################################################ 
+        if "RPTOWNERCIK" in self.data.columns and 'RPTOWNERCIK_;' in key_columns:
+            print("column is renamed. PLEASE CHANGE THIS ASAP")
+            self.data.rename(columns={'RPTOWNERCIK': 'RPTOWNERCIK_;'}, inplace=True)
+
         data = pd.merge(
             self.data,
             data_to_merge[key_columns + feature_columns],
