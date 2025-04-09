@@ -13,6 +13,7 @@ if parent_dir not in sys.path:
 
 import transaction_code_feature
 import graph_feature
+import network_feature
 import footnote_feature
 import other_feature
 
@@ -34,7 +35,8 @@ TRANSACTION_CODE_FEATURE = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'g_bi
 FOOTNOTE_FEATURE = ['gift', 'distribution', 'charity', 'price', 'number', 'ball', 'pursuant', '10b5-1', '16b-3']
 GRAPH_FEATURE = ['lobbyist_score_final', 'total_senate_connections', 'total_house_connections', 'combined_seniority_score', 'PI_combined_total']
 OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'relative_trade_size_to_others','beneficial_ownership_score']
-
+NETWORK_TIME_IND_FEATURE = ['is_lobby', 'has_lobby', 'has_donate']
+# NETWORK_TIME_DEP_FEATURE = ['subcomm']
 FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE
 
 class Feature_Data_Creator:
@@ -46,6 +48,7 @@ class Feature_Data_Creator:
         self.footnote_features = FOOTNOTE_FEATURE
         self.graph_features = GRAPH_FEATURE
         self.other_features = OTHER_FEATURE
+        self.network_time_ind_features = NETWORK_TIME_IND_FEATURE
         
         ## Combined features
         self.features = FEATURES
@@ -99,7 +102,10 @@ class Feature_Data_Creator:
             self.__create_footnote_features()
             
             ## Create graph features
-            self.__create_graph_features()
+            #self.__create_graph_features()
+
+            ## Create network features
+            self.__create_network_features()
             
             ## Create other features
             self.__create_other_features()
@@ -138,12 +144,32 @@ class Feature_Data_Creator:
 ################################################################################
 
     def __create_graph_features(self):
-        key_columns = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;"] # removed "TRANS_DATE"
+        key_columns = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;"] 
         feature_columns = self.graph_features
         
         data_to_merge = graph_feature.create_features()
         data_to_merge['TRANS_DATE'] = pd.to_datetime(data_to_merge['TRANS_DATE'])
         self.__merge_features(data_to_merge, key_columns, feature_columns)
+
+################################################################################
+# Create Network features (Graph features remodelled)
+################################################################################
+
+    def __create_network_features(self):
+        
+        # First add time_independent_features
+        key_columns = ["RPTOWNERCIK_;"] 
+        time_ind_features = self.network_time_ind_features
+        
+        data_to_merge = network_feature.create_time_independent_features()
+        self.__merge_features(data_to_merge, key_columns, time_ind_features)
+
+        # Second add time_dependent_features
+        key_columns = ["ACCESSION_NUMBER", "TRANS_SK"] 
+        #time_dep_features = self.network_time_dep_features
+
+        #data_to_merge = network_feature.create_time_dependent_features()
+        #self.__merge_features(data_to_merge, key_columns, time_dep_features)
 
 
 ################################################################################
@@ -164,6 +190,13 @@ class Feature_Data_Creator:
 ################################################################################  
 
     def __merge_features(self, data_to_merge, key_columns, feature_columns):
+
+        # EMILY TO REMOVE HARD CODED CHANGE AFTER ADDING SNORKEL LABEL PARTS
+        ################################################################################ 
+        if "RPTOWNERCIK" in self.data.columns and 'RPTOWNERCIK_;' in key_columns:
+            print("column is renamed. PLEASE CHANGE THIS ASAP")
+            self.data.rename(columns={'RPTOWNERCIK': 'RPTOWNERCIK_;'}, inplace=True)
+
         data = pd.merge(
             self.data,
             data_to_merge[key_columns + feature_columns],
