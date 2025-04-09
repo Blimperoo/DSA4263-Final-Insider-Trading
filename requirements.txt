@@ -7,3 +7,6 @@ bokeh>=3.1.0
 
 # Snorkel labelling , automatically also installs these: absl-py-2.2.1 grpcio-1.71.0 snorkel-0.10.0 tensorboard-2.19.0
 snorkel
+
+# Netowrk features
+igraph
