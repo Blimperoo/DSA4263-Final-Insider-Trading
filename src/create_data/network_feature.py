@@ -2,8 +2,14 @@ import pandas as pd
 import numpy as np
 import os
 import sys
-
-from tqdm import tqdm
+import glob
+import pickle
+from datetime import datetime
+from collections import deque
+from tqdm.notebook import tqdm
+import re
+import bisect
+import igraph as ig
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 if script_dir not in sys.path:
@@ -21,9 +27,13 @@ ABNORMAL_CSV = folder_location.ABNORMAL_CSV
 MERGED_RELATIONSHIP_FILE = folder_location.MERGED_RELATIONSHIP_FILE
 
 FEATURES_FOLDER = folder_location.FEATURES_DATA_FOLDER
+NETWORK_RAW_FOLDERS = folder_location.PROFILE_DATA_FOLDERS
 FINAL_FILE_1 = "network_time_ind_feature.csv"
 FINAL_FILE_2 = "network_time_dep_feature.csv"
 
+################################################################################
+# Create time independent features (matches on RPTOWNERCIK_;)
+################################################################################
 
 def create_time_independent_features():
     """This function will create the key-feature csv if file is not found and then return this Dataframe
@@ -118,3 +128,72 @@ def create_time_independent_features():
         df_to_return.to_csv(f'{FEATURES_FOLDER}/{FINAL_FILE_1}') # there are only 5 columns
 
     return df_to_return
+
+################################################################################
+# Create helper functions for time independent features and network analysis 
+################################################################################
+
+def load_pickle(filename):
+    with open(filename, "rb") as f:
+        return pickle.load(f)
+
+################################################################################
+# Create time independent features
+################################################################################
+
+def create_time_independent_features():
+    """This function will create the key-feature csv if file is not found and then return this Dataframe
+
+    Returns:
+        Dataframe: of features
+    """
+    current_compiled_files = os.listdir(FEATURES_FOLDER)
+    
+    # Checks if the file is found
+    if FINAL_FILE_1 in current_compiled_files:
+        print("=== Network Key 2 file is found. Extracting ===")
+        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE_2}')
+    else: # Create features and save
+        print("=== Network Key file not found, begin creating  ===")
+
+        #############################
+        # create transaction to node id match
+        ##############################
+
+        df_name_match = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/final_final_name_match.csv")
+        mapping_dict = df_name_match.set_index("SEC_RPTOWNERCIK")["NODEID"].to_dict()
+        df_txns = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}",
+                      usecols=["TRANS_SK", "ACCESSION_NUMBER", "TRANS_DATE", "RPTOWNERCIK", "ISSUERTRADINGSYMBOL"],
+                      parse_dates=["TRANS_DATE"])
+        df_txns["id"] = df_txns["RPTOWNERCIK"].map(mapping_dict)
+        if df_txns.shape != (3171001, 6):
+            print("Transaction Dataframe expected 3171001 rows 6 columns but has ", df_txns.shape)
+        ## Caitlyn saves this to df_txns.to_csv("txns_for_features.csv", index=False)
+
+        #############################
+        # committee connections
+        ##############################
+
+        network_data = os.listdir(FEATURES_FOLDER)
+        if "congress_nodeid_mapper.pkl" in network_data: 
+            congress_nodeid_mapper = load_pickle(f"{NETWORK_RAW_FOLDERS}/congress_nodeid_mapper.pkl")
+        else:
+            # create congress_nodeid_mapper
+            pass
+        
+        if "congress_date_subcomm_mapper.pkl" in network_data:
+            congress_date_subcomm_mapper = load_pickle(f"{NETWORK_RAW_FOLDERS}/congress_date_subcomm_mapper.pkl")
+        else:
+            # create congress_date_subcomm_mapper
+            pass
+
+        if "tic_to_subcomm_mapper.pkl" in network_data:
+            tic_to_subcomm_mapper = load_pickle(f"{NETWORK_RAW_FOLDERS}/tic_to_subcomm_mapper.pkl")
+        else:
+            pass
+        
+        #############################
+        # committee connections
+        ##############################
+    
+    pass
