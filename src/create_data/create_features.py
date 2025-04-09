@@ -36,7 +36,7 @@ FOOTNOTE_FEATURE = ['gift', 'distribution', 'charity', 'price', 'number', 'ball'
 GRAPH_FEATURE = ['lobbyist_score_final', 'total_senate_connections', 'total_house_connections', 'combined_seniority_score', 'PI_combined_total']
 OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'relative_trade_size_to_others','beneficial_ownership_score']
 NETWORK_TIME_IND_FEATURE = ['is_lobby', 'has_lobby', 'has_donate']
-# NETWORK_TIME_DEP_FEATURE = ['subcomm']
+NETWORK_TIME_DEP_FEATURE = ['important_connections', 'full_congress_connections']
 FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE
 
 class Feature_Data_Creator:
@@ -49,6 +49,7 @@ class Feature_Data_Creator:
         self.graph_features = GRAPH_FEATURE
         self.other_features = OTHER_FEATURE
         self.network_time_ind_features = NETWORK_TIME_IND_FEATURE
+        self.network_time_dep_features = NETWORK_TIME_DEP_FEATURE
         
         ## Combined features
         self.features = FEATURES
@@ -96,10 +97,10 @@ class Feature_Data_Creator:
             print("=== Final features file not found. Begin creating ===")
         
             ## Creates transaction code features
-            self.__create_transaction_code_features()
+            #self.__create_transaction_code_features()
             
             ## Creates footnotes features
-            self.__create_footnote_features()
+            #self.__create_footnote_features()
             
             ## Create graph features
             #self.__create_graph_features()
@@ -162,14 +163,14 @@ class Feature_Data_Creator:
         time_ind_features = self.network_time_ind_features
         
         data_to_merge = network_feature.create_time_independent_features()
-        self.__merge_features(data_to_merge, key_columns, time_ind_features)
+        #self.__merge_features(data_to_merge, key_columns, time_ind_features)
 
         # Second add time_dependent_features
         key_columns = ["ACCESSION_NUMBER", "TRANS_SK"] 
-        #time_dep_features = self.network_time_dep_features
+        time_dep_features = self.network_time_dep_features
 
-        #data_to_merge = network_feature.create_time_dependent_features()
-        #self.__merge_features(data_to_merge, key_columns, time_dep_features)
+        data_to_merge = network_feature.create_time_dependent_features()
+        self.__merge_features(data_to_merge, key_columns, time_dep_features)
 
 
 ################################################################################
