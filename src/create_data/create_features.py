@@ -37,6 +37,9 @@ OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_siz
 
 FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE
 
+PROBABILITY = ['snorkel_prob']
+PREDICTION = ['snorkel_pred']
+
 class Feature_Data_Creator:
     def __init__(self):
         self.data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FILE}', parse_dates=['TRANS_DATE'])
