@@ -47,7 +47,7 @@ TEMP_EXTRACTED = RAW_DATA_FOLDER+"/temp_extracted"
 FINAL_FOLDER = RAW_DATA_FOLDER+"/compiled"
 
 # Large files to exclude
-EXCLUDED_FILES = ['owner_signature.tsv', 'footnotes.tsv']
+EXCLUDED_FILES = ['owner_signature.tsv']
 
 # Final files present in compiled
 COMPILED_FILES = ["DERIV_HOLDING.csv", "DERIV_TRANS.csv", "FOOTNOTES.csv", "NONDERIV_HOLDING.csv",\
