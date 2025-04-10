@@ -34,9 +34,11 @@ TESTING_FILE = folder_location.TESTING_FULL_FEATURES_FILE
 TRANSACTION_CODE_FEATURE = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'g_bin']
 FOOTNOTE_FEATURE = ['gift', 'distribution', 'charity', 'price', 'number', 'ball', 'pursuant', '10b5-1', '16b-3']
 GRAPH_FEATURE = ['lobbyist_score_final', 'total_senate_connections', 'total_house_connections', 'combined_seniority_score', 'PI_combined_total']
-OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'relative_trade_size_to_others','beneficial_ownership_score']
+
+OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'relative_trade_size_to_others','beneficial_ownership_score','title_score']
 NETWORK_TIME_IND_FEATURE = ['is_lobby', 'has_lobby', 'has_donate']
 # NETWORK_TIME_DEP_FEATURE = ['subcomm']
+
 FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE
 
 class Feature_Data_Creator:

@@ -204,10 +204,101 @@ def create_features():
         trans_score_df['beneficial_ownership_score'] = trans_score_df['NATURE_OF_OWNERSHIP'].apply(map_nature_of_ownership_score)
 
         ##############################
+        # Title Score ('RPTOWNER_TITLE_#')
+        ##############################
+        def is_pure_na_or_note(cell):
+            """
+            Returns True if the cell is:
+            - a missing value (NaN), or
+            - a string that, when split by '#', consists entirely of tokens that are either "nan"
+                or a note indicator (e.g., tokens that start with "see remarks" or "see footnote").
+            """
+            if pd.isna(cell):
+                return True
+            
+            # Split the cell text by '#' and examine each token.
+            tokens = str(cell).split('#')
+            for token in tokens:
+                token_clean = token.strip()
+                # Convert token to lowercase and remove any leading asterisks.
+                token_lower = token_clean.lower().lstrip('*').strip()
+                # Remove enclosing parentheses if present.
+                if token_lower.startswith('(') and token_lower.endswith(')'):
+                    token_lower = token_lower[1:-1].strip()
+                if token_lower == 'nan':
+                    continue
+                # Allow any token that starts with "see remarks" or "see footnote"
+                if token_lower.startswith("see remarks") or token_lower.startswith("see footnote"):
+                    continue
+                # Found a token that is not NA or a note indicator.
+                return False
+            return True
+
+        #seniority mapping
+        seniority_keywords = {
+            "lead independent director": 3,
+            "chairperson": 3,
+            "chief executive officer": 3,
+            "ceo": 3,
+            "coo": 3,
+            "president": 2,
+            "cfo": 2,
+            "managing director": 2,
+            "evp":2,
+            "vp": 2,
+            "vice president": 2,
+            "officer": 2,
+            "chairman": 2,
+            "treasurer": 1,
+            "board": 1,
+            "director": 1,
+            "secretary": 1,
+        }
+
+        # Precompile a regex pattern to clean non-alphanumeric characters (except spaces).
+        PATTERN_CLEAN = re.compile(r'[^a-z0-9 ]')
+
+        def map_title_score(text):
+            """
+            Maps the title text to a numeric title score based on seniority_keywords.
+            
+            Process:
+            1. If the text is missing or purely a note/NA indicator (using is_pure_na_or_note), return 0.
+            2. Clean the text by removing non-alphanumeric characters (except spaces) and converting to lowercase.
+            3. Tokenize the cleaned text.
+            4. For each keyword in the seniority_keywords mapping:
+                - If the keyword contains a space (multi-word phrase), check if it appears in the entire cleaned text.
+                - Else, check if any token contains the keyword as a substring.
+            5. Return the total score
+            """
+            if is_pure_na_or_note(text):
+                return 0
+
+            text = text.strip()
+            # Clean the text: remove punctuation and extra characters, then lowercase.
+            clean_text = PATTERN_CLEAN.sub(' ', text.lower())
+            tokens = clean_text.split()
+
+            total_score = 0
+            for keyword, score in seniority_keywords.items():
+                if " " in keyword:
+                    # For multi-word keyword, search the entire clean_text.
+                    if keyword in clean_text:
+                        total_score += score
+                else:
+                    # For single-word keywords, search each token.
+                    if any(keyword in token for token in tokens):
+                        total_score += score
+
+            return total_score
+
+        trans_score_df['title_score'] = trans_score_df['RPTOWNER_TITLE_#'].apply(map_title_score)
+
+        ##############################
         # Save file
         ##############################
         features_to_keep = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", 
-                            "relative_trade_size_to_others", "trans_amt", "security_category","beneficial_ownership_score"]
+                            "relative_trade_size_to_others", "trans_amt", "security_category","beneficial_ownership_score","title_score"]
         key = ["ACCESSION_NUMBER", "TRANS_SK"]
 
         df_to_save = trans_score_df[features_to_keep + key]
