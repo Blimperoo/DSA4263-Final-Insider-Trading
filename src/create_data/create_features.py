@@ -14,7 +14,6 @@ if parent_dir not in sys.path:
 import transaction_code_feature
 import graph_feature
 import network_feature
-import network_feature_2
 import footnote_feature
 import other_feature
 
@@ -46,7 +45,7 @@ FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_F
 
 IMPORTANT_KEYS = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;"]
 PROBABILITY = ['snorkel_prob']
-PREDICTION = ['snorkel_pred']
+PREDICTION = ['y_pred']
 
 class Feature_Data_Creator:
     def __init__(self):
