@@ -11,14 +11,8 @@ parent_dir = os.path.dirname(os.path.abspath(f'{__file__}/..'))
 if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
-import transaction_code_feature
-import graph_feature
-import network_feature
-import network_feature_2
-import footnote_feature
-import other_feature
-
 from path_location import folder_location
+import create_features
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 
@@ -30,21 +24,22 @@ TRAINING_FILE = folder_location.TRAINING_FULL_FEATURES_FILE
 
 TESTING_FILE = folder_location.TESTING_FULL_FEATURES_FILE
 
-TRANSACTION_CODE_FEATURE = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'g_bin']
-FOOTNOTE_FEATURE = ['gift', 'distribution', 'charity', 'price', 'number', 'ball', 'pursuant', '10b5-1', '16b-3']
-GRAPH_FEATURE = ['lobbyist_score_final', 'total_senate_connections', 'total_house_connections', 'combined_seniority_score', 'PI_combined_total']
-OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'relative_trade_size_to_others','beneficial_ownership_score']
-NETWORK_TIME_IND_FEATURE = ['is_lobby', 'has_lobby', 'has_donate']
-NETWORK_FEATURE = ['important_connections',	'full_congress_connections', 'sen_important_connections', 'sen_full_congress_connections',
-                   'sen_t2_full_congress_connections', 'sen_t1_important_connections', 'sen_t1_full_congress_connections',	'house_t2_important_connections',
-                   'house_t2_full_congress_connections', 'house_t1_important_connections', 'house_t1_full_congress_connections']
+FEATURES_PROCESSED = "full_features_processed.csv"
 
-# NETWORK_TIME_DEP_FEATURE = ['subcomm']
+TRANSACTION_CODE_FEATURE = create_features.TRANSACTION_CODE_FEATURE
+FOOTNOTE_FEATURE = create_features.FOOTNOTE_FEATURE
+GRAPH_FEATURE = create_features.GRAPH_FEATURE
+OTHER_FEATURE = create_features.OTHER_FEATURE
+NETWORK_TIME_IND_FEATURE = create_features.NETWORK_TIME_IND_FEATURE
+NETWORK_FEATURE = create_features.NETWORK_FEATURE
+
 FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE + NETWORK_TIME_IND_FEATURE + NETWORK_FEATURE
-IMPORTANT_KEYS = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;", "TRANS_DATE"]
+IMPORTANT_KEYS = create_features.IMPORTANT_KEYS
 
-PROBABILITY = ['snorkel_prob']
-PREDICTION = ['snorkel_pred']
+PROBABILITY = create_features.PROBABILITY
+PREDICTION = create_features.PREDICTION
+
+
 
 class Feature_Data_Creator:
     def __init__(self):
@@ -54,44 +49,51 @@ class Feature_Data_Creator:
         ## Combined features
         self.features = FEATURES
         
+################################################################################
+# Extract found features
+################################################################################
     def extract(self):
+        """Extract found features in feature columns and then preprocess it. Then finally create training and testing
+        """
         relevant_data = self.data.copy()
-        
         found_features = []
         
         for column in relevant_data.columns:
             if column in FEATURES:
                 found_features.append(column)
         
-        relevant_data = relevant_data[found_features + PROBABILITY + PREDICTION]
+        relevant_data = relevant_data[found_features + PROBABILITY + PREDICTION + ["TRANS_DATE"]]
         self.data = relevant_data
         
         for column in found_features:
-            # if column != "relative_trade_size_to_self":
-            #     continue
             self.preprocess(column)
+            
+        self.create_training_testing()
         
-        self.data.to_csv("check1.csv")
-        
+################################################################################
+# Preprocess features
+################################################################################ 
     def preprocess(self, feature):
-        
-        
+        """Preprocess data. If object type then create one hot encoding
+           If int or float type then remove fill na with 0, remove infinite and scale to 0 - 1
+        Args:
+            feature (str): column name
+        """
         relevant_data = self.data.copy()
-        print(relevant_data[feature].dtypes, feature)
+        print(f"preprocess {feature} with type {relevant_data[feature].dtypes}")
         
         # Check if one hot encoding is needed
         if relevant_data[feature].dtypes == object:
             data_to_replace = pd.get_dummies(relevant_data, columns=[feature], dtype=int)
         
-        
+        # If is int or float
         elif relevant_data[feature].dtypes == np.int64 or relevant_data[feature].dtypes == np.float64:
-            print("yep")
             data_to_replace = relevant_data.copy()
             
             # Check if there is infinite
             if sum(np.isinf(relevant_data[feature])) > 0:
-                # max_val = relevant_data[feature].max()
-                print(relevant_data[feature].dtypes)
+                
+                # Replace infinite with next highest value
                 to_sort = relevant_data[feature].unique()
                 to_sort.sort()
                 next_largest = to_sort[-2]
@@ -102,19 +104,42 @@ class Feature_Data_Creator:
                 
             # Check if there is NA
             if sum(np.isnan(relevant_data[feature])) > 0:
+                # Replace with NA with 0
                 relevant_data[feature] = relevant_data[feature].fillna(0)
                 data_to_replace = relevant_data.copy()
             
             # Check data scaling
             if (relevant_data[feature].max() != 1 or relevant_data[feature].min() != 0):
+                # Scale values to 0 to 1
                 min_val, max_val = relevant_data[feature].min(), relevant_data[feature].max()
                 relevant_data[feature] = relevant_data[feature].apply(lambda x: (x - min_val)/ (max_val - min_val))
                 data_to_replace = relevant_data.copy()
 
         self.data = data_to_replace
+
+################################################################################
+# Create training and testing data
+################################################################################
+
+    def create_training_testing(self, quantile = 0.80):
+        """ Creates training and testing split by transaction date based on quantile
+        """
+        features_folder = os.listdir(PROCESSED_DATA_FOLDER)
+        
+        if (TRAINING_FILE not in features_folder) or (TESTING_FILE not in features_folder):
+            print(f"=== Training or Testing file not found. Begin creating based on quantile: {quantile}")
+            curr_data = self.data.copy()
+            date_to_split = curr_data['TRANS_DATE'].quantile(quantile)
+            
+            training_data = curr_data[curr_data['TRANS_DATE'] < date_to_split].drop(columns=["TRANS_DATE"])
+            testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split].drop(columns=["TRANS_DATE"])
+            
+            print("=== Saving Training and Testing ===")
+            training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TRAINING_FILE}")
+            testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TESTING_FILE}")
+        else:
+            print("=== Training and Testing file present ===")
+            # self.data.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}')
     
-        
-        
-                
 Feature_Data_Creator().extract()
         

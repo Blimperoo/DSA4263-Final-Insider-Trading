@@ -43,16 +43,11 @@ NETWORK_FEATURE = ['important_connections',	'full_congress_connections', 'sen_im
                    'house_t2_full_congress_connections', 'house_t1_important_connections', 'house_t1_full_congress_connections']
 
 # NETWORK_TIME_DEP_FEATURE = ['subcomm']
-<<<<<<< HEAD
 FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE + NETWORK_TIME_IND_FEATURE + NETWORK_FEATURE
 IMPORTANT_KEYS = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;", "TRANS_DATE"]
 
 PROBABILITY = ['snorkel_prob']
 PREDICTION = ['snorkel_pred']
-=======
-
-FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE
->>>>>>> 227368a190bbd69e17922471739275b47024a7b1
 
 class Feature_Data_Creator:
     def __init__(self):
@@ -68,31 +63,6 @@ class Feature_Data_Creator:
         
         ## Combined features
         self.features = FEATURES
-
-################################################################################
-# Create training and testing data
-################################################################################
-
-    def create_training_testing(self, quantile = 0.80):
-        """ Creates training and testing split by transaction date based on quantile
-        """
-        features_folder = os.listdir(PROCESSED_DATA_FOLDER)
-        self.data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', parse_dates=['TRANS_DATE'])
-        
-        if (TRAINING_FILE not in features_folder) or (TESTING_FILE not in features_folder):
-            print(f"=== Training or Testing file not found. Begin creating based on quantile: {quantile}")
-            curr_data = self.data.copy()
-            date_to_split = curr_data['TRANS_DATE'].quantile(quantile)
-            
-            training_data = curr_data[curr_data['TRANS_DATE'] < date_to_split]
-            testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split]
-            
-            print("=== Saving Training and Testing ===")
-            training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TRAINING_FILE}")
-            testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TESTING_FILE}")
-        else:
-            print("=== Training and Testing file present ===")
-            self.data.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}')
 
 
 ################################################################################
@@ -232,8 +202,6 @@ class Feature_Data_Creator:
         if "RPTOWNERCIK" in self.data.columns and 'RPTOWNERCIK_;' in key_columns:
             print("column is renamed. PLEASE CHANGE THIS ASAP")
             self.data.rename(columns={'RPTOWNERCIK': 'RPTOWNERCIK_;'}, inplace=True)
-        
-        print(data_to_merge)
 
         data = pd.merge(
             self.data,
@@ -268,6 +236,3 @@ class Feature_Data_Creator:
         create_data = create_data[list_of_savable_features]
         create_data.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}')
         self.data = create_data
-        
-x =Feature_Data_Creator()
-x.create_training_testing()
