@@ -36,16 +36,15 @@ TRANSACTION_CODE_FEATURE = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'gb_b
 FOOTNOTE_FEATURE = ['gift', 'distribution', 'charity', 'price', 'number', 'ball', 'pursuant', '10b5-1', '16b-3']
 GRAPH_FEATURE = ['lobbyist_score_final', 'total_senate_connections', 'total_house_connections', 'combined_seniority_score', 'PI_combined_total']
 
-OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'relative_trade_size_to_others','beneficial_ownership_score','title_score']
+OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'beneficial_ownership_score','title_score',
+                 "TRANS_TIMELINESS_clean", 'execution_timeliness', 'filing_lag_days', 'filing_timeliness']
 NETWORK_TIME_IND_FEATURE = ['is_lobby', 'has_lobby', 'has_donate']
-NETWORK_FEATURE = ['important_connections',	'full_congress_connections', 'sen_important_connections', 'sen_full_congress_connections',
-                   'sen_t2_full_congress_connections', 'sen_t1_important_connections', 'sen_t1_full_congress_connections',	'house_t2_important_connections',
-                   'house_t2_full_congress_connections', 'house_t1_important_connections', 'house_t1_full_congress_connections']
+NETWORK_TIME_DEP_FEATURE = ['important_connections',	'full_congress_connections', 'sen_important_connections', 'sen_full_congress_connections',
+                            'sen_t2_full_congress_connections', 'sen_t1_important_connections', 'sen_t1_full_congress_connections',	'house_t2_important_connections',
+                            'house_t2_full_congress_connections', 'house_t1_important_connections', 'house_t1_full_congress_connections']
+FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE + NETWORK_TIME_IND_FEATURE + NETWORK_TIME_DEP_FEATURE
 
-# NETWORK_TIME_DEP_FEATURE = ['subcomm']
-FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE + NETWORK_TIME_IND_FEATURE + NETWORK_FEATURE
-IMPORTANT_KEYS = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;", "TRANS_DATE"]
-
+IMPORTANT_KEYS = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;"]
 PROBABILITY = ['snorkel_prob']
 PREDICTION = ['snorkel_pred']
 
@@ -59,7 +58,7 @@ class Feature_Data_Creator:
         self.graph_features = GRAPH_FEATURE
         self.other_features = OTHER_FEATURE
         self.network_time_ind_features = NETWORK_TIME_IND_FEATURE
-        self.network_time_ind_features_2 = NETWORK_FEATURE
+        self.network_time_dep_features = NETWORK_TIME_DEP_FEATURE
         
         ## Combined features
         self.features = FEATURES
@@ -89,12 +88,10 @@ class Feature_Data_Creator:
             self.__create_footnote_features()
             
             ## Create graph features
-            #self.__create_graph_features()
+            self.__create_graph_features()
 
             ## Create network features
             self.__create_network_features()
-            
-            self.__create_network_features_2()
             
             ## Create other features
             self.__create_other_features()
@@ -156,26 +153,10 @@ class Feature_Data_Creator:
 
         # Second add time_dependent_features
         key_columns = ["ACCESSION_NUMBER", "TRANS_SK"] 
-        #time_dep_features = self.network_time_dep_features
+        time_dep_features = self.network_time_dep_features
 
-        #data_to_merge = network_feature.create_time_dependent_features()
-        #self.__merge_features(data_to_merge, key_columns, time_dep_features)
-        
-    def __create_network_features_2(self):
-        
-        # First add time_independent_features
-        key_columns = ["TRANS_SK"] 
-        time_ind_features = self.network_time_ind_features_2
-        
-        data_to_merge = network_feature_2.create_time_independent_features()
-        self.__merge_features(data_to_merge, key_columns, time_ind_features)
-
-        # Second add time_dependent_features
-        key_columns = ["ACCESSION_NUMBER", "TRANS_SK"] 
-        #time_dep_features = self.network_time_dep_features
-
-        #data_to_merge = network_feature.create_time_dependent_features()
-        #self.__merge_features(data_to_merge, key_columns, time_dep_features)
+        data_to_merge = network_feature.create_time_dependent_features()
+        self.__merge_features(data_to_merge, key_columns, time_dep_features)
 
 
 ################################################################################

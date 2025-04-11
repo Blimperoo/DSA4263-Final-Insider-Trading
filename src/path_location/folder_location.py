@@ -21,3 +21,8 @@ MERGED_RELATIONSHIP_FILE = 'merged_relationships_full.csv'
 SEC_SUBMISSIONS_FOLDER = '../../data_untracked/raw/sec_submissions'
 SEC_DATA_FOLDER = "../../data_untracked/raw/sec_submissions/compiled"
 FOOTNOTE_FILE = "FOOTNOTES.csv"
+
+#####################
+# Profile folder
+#####################
+PROFILE_DATA_FOLDERS = '../../data_untracked/raw/profile_data'

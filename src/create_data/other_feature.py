@@ -61,7 +61,7 @@ def create_features():
         ni_df['net_trading_intensity'] = (
             (ni_df['buy_count'] - ni_df['sell_count']) /
             (ni_df['buy_count'] + ni_df['sell_count'])
-        )
+        ).replace([np.inf, -np.inf], np.nan)
 
         ni_df['net_trading_amt'] = (
             (ni_df['buy_amt'] - ni_df['sell_amt']) /
@@ -98,13 +98,6 @@ def create_features():
         trans_score_df['relative_trade_size_to_self'].fillna(1, inplace=True)
 
         assert trans_score_df.shape[0] == num_rows
-
-        ##############################
-        # relative_trade_size_to_others
-        ##############################
-        trans_score_df['market_value_traded'] = trans_score_df['VOL'] * trans_score_df['PRC'].abs()
-        trans_score_df['relative_trade_size_to_others'] = (trans_score_df['trans_amt'] / trans_score_df['market_value_traded']
-                                                           ).replace([np.inf, -np.inf], np.nan)
 
         ##############################
         # security category
@@ -291,14 +284,36 @@ def create_features():
                         total_score += score
 
             return total_score
-
+        
         trans_score_df['title_score'] = trans_score_df['RPTOWNER_TITLE_#'].apply(map_title_score)
 
+        ##############################
+        # Features based on transaction, execution and filing date
+        ##############################
+
+        # 3 categories according to SEC 
+        trans_score_df['TRANS_TIMELINESS_clean'] = trans_score_df['TRANS_TIMELINESS'].replace({'E': 'early', 'L': 'late', np.nan: 'on_time'})
+
+        # Note that there are transactions deemed to be executed more than a year before/after. Only 3 categories
+        trans_score_df['execution_timeliness'] = (pd.to_datetime(trans_score_df['DEEMED_EXECUTION_DATE']) - trans_score_df['TRANS_DATE']).apply(lambda x: 'before_trans' if x.days < 0 else 'after_trans' if x.days > 0 else 'on_trans')
+
+        # Compute lag in days
+        trans_score_df['filing_lag_days'] = (pd.to_datetime(trans_score_df['FILING_DATE']) - trans_score_df['TRANS_DATE']).dt.days
+
+        # Compute days categorical label
+        trans_score_df['filing_timeliness'] = trans_score_df['filing_lag_days'].apply( 
+            lambda x: 'early_filing' if pd.notna(x) and x < 0
+                else ('on_time_filing' if pd.notna(x) and x == 0
+                       else ('late_filing' if pd.notna(x) and x > 0
+                              else 'missing_filing_date'))
+        ) 
         ##############################
         # Save file
         ##############################
         features_to_keep = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", 
-                            "relative_trade_size_to_others", "trans_amt", "security_category","beneficial_ownership_score","title_score"]
+                             "trans_amt", "security_category","beneficial_ownership_score","title_score",
+                            "TRANS_TIMELINESS_clean", 'execution_timeliness', 'filing_lag_days', 'filing_timeliness']
+        
         key = ["ACCESSION_NUMBER", "TRANS_SK"]
 
         df_to_save = trans_score_df[features_to_keep + key]
