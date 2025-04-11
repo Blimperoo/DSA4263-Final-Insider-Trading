@@ -31,9 +31,9 @@ FOOTNOTE_FEATURE = create_features.FOOTNOTE_FEATURE
 GRAPH_FEATURE = create_features.GRAPH_FEATURE
 OTHER_FEATURE = create_features.OTHER_FEATURE
 NETWORK_TIME_IND_FEATURE = create_features.NETWORK_TIME_IND_FEATURE
-NETWORK_FEATURE = create_features.NETWORK_FEATURE
+NETWORK_TIME_DEP_FEATURE = create_features.NETWORK_TIME_DEP_FEATURE
 
-FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE + NETWORK_TIME_IND_FEATURE + NETWORK_FEATURE
+FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE + NETWORK_TIME_IND_FEATURE + NETWORK_TIME_DEP_FEATURE
 IMPORTANT_KEYS = create_features.IMPORTANT_KEYS
 
 PROBABILITY = create_features.PROBABILITY
@@ -124,22 +124,18 @@ class Feature_Data_Creator:
     def create_training_testing(self, quantile = 0.80):
         """ Creates training and testing split by transaction date based on quantile
         """
-        features_folder = os.listdir(PROCESSED_DATA_FOLDER)
         
-        if (TRAINING_FILE not in features_folder) or (TESTING_FILE not in features_folder):
-            print(f"=== Training or Testing file not found. Begin creating based on quantile: {quantile}")
-            curr_data = self.data.copy()
-            date_to_split = curr_data['TRANS_DATE'].quantile(quantile)
-            
-            training_data = curr_data[curr_data['TRANS_DATE'] < date_to_split].drop(columns=["TRANS_DATE"])
-            testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split].drop(columns=["TRANS_DATE"])
-            
-            print("=== Saving Training and Testing ===")
-            training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TRAINING_FILE}")
-            testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TESTING_FILE}")
-        else:
-            print("=== Training and Testing file present ===")
-            # self.data.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}')
+        print(f"=== Begin creating based on quantile: {quantile}")
+        curr_data = self.data.copy()
+        date_to_split = curr_data['TRANS_DATE'].quantile(quantile)
+        
+        training_data = curr_data[curr_data['TRANS_DATE'] < date_to_split].drop(columns=["TRANS_DATE"])
+        testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split].drop(columns=["TRANS_DATE"])
+        
+        print("=== Saving Training and Testing ===")
+        training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TRAINING_FILE}")
+        testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TESTING_FILE}")
+
     
 Feature_Data_Creator().extract()
         
