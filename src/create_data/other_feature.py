@@ -61,7 +61,7 @@ def create_features():
         ni_df['net_trading_intensity'] = (
             (ni_df['buy_count'] - ni_df['sell_count']) /
             (ni_df['buy_count'] + ni_df['sell_count'])
-        )
+        ).replace([np.inf, -np.inf], np.nan)
 
         ni_df['net_trading_amt'] = (
             (ni_df['buy_amt'] - ni_df['sell_amt']) /
