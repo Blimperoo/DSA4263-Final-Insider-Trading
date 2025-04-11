@@ -100,13 +100,6 @@ def create_features():
         assert trans_score_df.shape[0] == num_rows
 
         ##############################
-        # relative_trade_size_to_others
-        ##############################
-        trans_score_df['market_value_traded'] = trans_score_df['VOL'] * trans_score_df['PRC'].abs()
-        trans_score_df['relative_trade_size_to_others'] = (trans_score_df['trans_amt'] / trans_score_df['market_value_traded']
-                                                           ).replace([np.inf, -np.inf], np.nan)
-
-        ##############################
         # security category
         ##############################
         trans_score_df['trans_amt'] = trans_score_df['TRANS_SHARES'] * trans_score_df['TRANS_PRICEPERSHARE']
@@ -302,10 +295,10 @@ def create_features():
         trans_score_df['TRANS_TIMELINESS_clean'] = trans_score_df['TRANS_TIMELINESS'].replace({'E': 'early', 'L': 'late', np.nan: 'on_time'})
 
         # Note that there are transactions deemed to be executed more than a year before/after. Only 3 categories
-        trans_score_df['execution_timeliness'] = (trans_score_df['DEEMED_EXECUTION_DATE'] - trans_score_df['TRANS_DATE']).apply(lambda x: 'before_trans' if x.days < 0 else 'after_trans' if x.days > 0 else 'on_trans')
+        trans_score_df['execution_timeliness'] = (pd.to_datetime(trans_score_df['DEEMED_EXECUTION_DATE']) - trans_score_df['TRANS_DATE']).apply(lambda x: 'before_trans' if x.days < 0 else 'after_trans' if x.days > 0 else 'on_trans')
 
         # Compute lag in days
-        trans_score_df['filing_lag_days'] = (trans_score_df['FILING_DATE'] - trans_score_df['TRANS_DATE']).dt.days
+        trans_score_df['filing_lag_days'] = (pd.to_datetime(trans_score_df['FILING_DATE']) - trans_score_df['TRANS_DATE']).dt.days
 
         # Compute days categorical label
         trans_score_df['filing_timeliness'] = trans_score_df['filing_lag_days'].apply( 
@@ -318,7 +311,7 @@ def create_features():
         # Save file
         ##############################
         features_to_keep = ["net_trading_intensity", "net_trading_amt", "relative_trade_size_to_self", 
-                            "relative_trade_size_to_others", "trans_amt", "security_category","beneficial_ownership_score","title_score",
+                             "trans_amt", "security_category","beneficial_ownership_score","title_score",
                             "TRANS_TIMELINESS_clean", 'execution_timeliness', 'filing_lag_days', 'filing_timeliness']
         
         key = ["ACCESSION_NUMBER", "TRANS_SK"]
