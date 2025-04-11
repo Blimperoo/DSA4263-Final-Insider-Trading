@@ -14,7 +14,6 @@ if parent_dir not in sys.path:
 import transaction_code_feature
 import graph_feature
 import network_feature
-import network_feature_2
 import footnote_feature
 import other_feature
 
@@ -39,7 +38,7 @@ GRAPH_FEATURE = ['lobbyist_score_final', 'total_senate_connections', 'total_hous
 OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'beneficial_ownership_score','title_score',
                  "TRANS_TIMELINESS_clean", 'execution_timeliness', 'filing_lag_days', 'filing_timeliness']
 NETWORK_TIME_IND_FEATURE = ['is_lobby', 'has_lobby', 'has_donate']
-NETWORK_TIME_DEP_FEATURE = ['important_connections',	'full_congress_connections', 'sen_important_connections', 'sen_full_congress_connections',
+NETWORK_TIME_DEP_FEATURE = ['important_connections', 'full_congress_connections', 'sen_important_connections', 'sen_full_congress_connections',
                             'sen_t2_full_congress_connections', 'sen_t1_important_connections', 'sen_t1_full_congress_connections',	'house_t2_important_connections',
                             'house_t2_full_congress_connections', 'house_t1_important_connections', 'house_t1_full_congress_connections']
 FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE + NETWORK_TIME_IND_FEATURE + NETWORK_TIME_DEP_FEATURE
