@@ -83,3 +83,4 @@ def create_features():
         df_to_return = df_to_save
 
     return df_to_return
+create_features()
