@@ -174,6 +174,7 @@ def create_time_dependent_features():
         df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE_2}')
     else: # Create features and save
         print("=== Network time_dependent_features file not found, begin creating  ===")
+        print("--- current code might only create important_connections and full_congress_connections. Please double check --- ")
 
         #############################
         # create transaction to little sis node id match
@@ -188,7 +189,7 @@ def create_time_dependent_features():
         df_txns.sort_values(["id","TRANS_DATE"], inplace=True)
         if df_txns.shape != (3171001, 6):
             print("Transaction Dataframe expected 3171001 rows 6 columns but has ", df_txns.shape)
-        ## Caitlyn saves this to df_txns.to_csv("txns_for_features.csv", index=False)
+        ## This resulting df_txns is saved as the file "txns_for_features.csv"
 
         #############################
         # load adjacency list to build graph
@@ -222,6 +223,7 @@ def create_time_dependent_features():
             print("TIC to subcommittee mapper pickle not found. Creating it.")
             tic_to_subcomm = __create_tic_to_subcomm_mapper()
 
+        ### Double check - is this house_date_subcomm_mapper or congress_date_subcomm_mapper ??  
         if "congress_date_subcomm_mapper.pkl" in network_data:
             subcomm_by_date = load_pickle(f"{NETWORK_RAW_FOLDERS}/congress_date_subcomm_mapper.pkl")
         else:
@@ -231,16 +233,29 @@ def create_time_dependent_features():
         house_dates   = sorted(house_by_date.keys())
         subcomm_dates = {sub: sorted(tl.keys()) for sub, tl in subcomm_by_date.items()}
 
+        # =====================================================
+        # 4. Define Lookup Functions to Precompute Memberships
+        # =====================================================
         def get_active_house(dt):
+            """
+            Given a datetime dt, returns the set of active House member Littlesis IDs as of dt.
+            Uses house_membership_by_date (sorted by date).
+            """
             i = bisect.bisect_right(house_dates, dt) - 1
-            return set() if i<0 else set(house_by_date[house_dates[i]])
+            return set() if i < 0 else set(house_by_date[house_dates[i]])
 
         def get_imp_cands(dt, tic):
+            """
+            Given a transaction date dt and a TIC, returns the union of active subcommittee member sets.
+            For each subcommittee associated with the TIC (via tic_to_subcomm_mapper),
+            it looks up the last change date (from house_date_subcomm_mapper) as of dt and
+            accumulates the active member Littlesis IDs.
+            """
             s = set()
             for sub in tic_to_subcomm.get(tic, ()):
                 dates = subcomm_dates.get(sub, [])
                 j = bisect.bisect_right(dates, dt) - 1
-                if j>=0:
+                if j >= 0:
                     s |= set(subcomm_by_date[sub][dates[j]])
             return s
         
@@ -254,7 +269,9 @@ def create_time_dependent_features():
         }
 
     
-        # BFS + Group‐by inside each source
+        # =====================================================
+        # 5. Perform BFS and Compute Membership Intersections for Each Source
+        # =====================================================
 
         threshold = 3
         imp_map, full_map = {}, {}
@@ -269,32 +286,32 @@ def create_time_dependent_features():
                     imp_map[idx] = full_map[idx] = 0
                 continue
 
-            # 1) One BFS to get everyone reachable within threshold
-            reachable = set(G.neighborhood(vertices=int(source), order=threshold, mode="out"))
+               # Retrieve nodes reachable from the source within the given threshold.
+            reachable = {str(n) for n in G.neighborhood(vertices=int(source), order=threshold, mode="out")}
 
-            # 2) Now group by (date, ticker) to do intersections once
-            for (dt, tic), sub in grp.groupby(["TRANS_DATE","ISSUERTRADINGSYMBOL"]):
+
+            # Group transactions by the (TRANS_DATE, ISSUERTRADINGSYMBOL) pair.
+            for (dt, tic), sub in grp.groupby(["TRANS_DATE", "ISSUERTRADINGSYMBOL"]):
                 full_cands = full_by_date.get(dt, set())
-                imp_cands  = imp_by_dt_tic.get((dt, tic), set())
-
+                imp_cands = imp_by_dt_tic.get((dt, tic), set())
                 full_cnt = len(full_cands & reachable)
-                imp_cnt  = len(imp_cands  & reachable)
-
+                imp_cnt = len(imp_cands & reachable)
                 for idx in sub.index:
                     full_map[idx] = full_cnt
-                    imp_map[idx]  = imp_cnt
+                    imp_map[idx] = imp_cnt
 
-            # drop reachable set before next source
-            del reachable
+            del reachable  # Free up memory before processing the next source.
+
         
         # Map back into DataFrame
         df_txns["important_connections"]     = df_txns["orig_index"].map(imp_map).fillna(0).astype(int)
         df_txns["full_congress_connections"] = df_txns["orig_index"].map(full_map).fillna(0).astype(int)
 
-        print("final: " , df_txns.columns, df_txns.shape)
+        print("file created with columns: " , df_txns.columns, "and shape: ", df_txns.shape)
 
         df_txns.to_csv(f"{FEATURES_FOLDER}/{FINAL_FILE_2}", index=False)
         df_to_return = df_txns
+
     return df_to_return
 
 #############################
