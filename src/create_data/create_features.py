@@ -34,10 +34,13 @@ TESTING_FILE = folder_location.TESTING_FULL_FEATURES_FILE
 TRANSACTION_CODE_FEATURE = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'g_bin']
 FOOTNOTE_FEATURE = ['gift', 'distribution', 'charity', 'price', 'number', 'ball', 'pursuant', '10b5-1', '16b-3']
 GRAPH_FEATURE = ['lobbyist_score_final', 'total_senate_connections', 'total_house_connections', 'combined_seniority_score', 'PI_combined_total']
-OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'relative_trade_size_to_others','beneficial_ownership_score']
 NETWORK_TIME_IND_FEATURE = ['is_lobby', 'has_lobby', 'has_donate']
-NETWORK_TIME_DEP_FEATURE = ['important_connections', 'full_congress_connections']
-FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE
+NETWORK_TIME_DEP_FEATURE = ['important_connections', 'full_congress_connections', 'sen_important_connections', 'sen_full_congress_connections',
+                            'sen_t2_important_connections', 'sen_t2_full_congress_connections', 'sen_t1_important_connections', 'sen_t1_full_congress_connections',
+                            'house_t2_important_connections', 'house_t2_full_congress_connections', 'house_t1_important_connections', 'house_t1_full_congress_connections']
+OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'relative_trade_size_to_others','beneficial_ownership_score']
+
+FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + NETWORK_TIME_IND_FEATURE + NETWORK_TIME_DEP_FEATURE + OTHER_FEATURE
 
 class Feature_Data_Creator:
     def __init__(self):
@@ -97,13 +100,13 @@ class Feature_Data_Creator:
             print("=== Final features file not found. Begin creating ===")
         
             ## Creates transaction code features
-            #self.__create_transaction_code_features()
+            self.__create_transaction_code_features()
             
             ## Creates footnotes features
-            #self.__create_footnote_features()
+            self.__create_footnote_features()
             
             ## Create graph features
-            #self.__create_graph_features()
+            self.__create_graph_features()
 
             ## Create network features
             self.__create_network_features()
@@ -163,7 +166,7 @@ class Feature_Data_Creator:
         time_ind_features = self.network_time_ind_features
         
         data_to_merge = network_feature.create_time_independent_features()
-        #self.__merge_features(data_to_merge, key_columns, time_ind_features)
+        self.__merge_features(data_to_merge, key_columns, time_ind_features)
 
         # Second add time_dependent_features
         key_columns = ["ACCESSION_NUMBER", "TRANS_SK"] 
