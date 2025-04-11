@@ -33,13 +33,12 @@ def create_features():
     # Checks if the file is found
     if FINAL_FILE in current_compiled_files:
         print("=== Transaction Key file is found. Extracting ===")
-        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}')
+        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}', index_col=0)
     else: # Create features and save
         print("=== Transaction Key file not found, begin creating  ===")
         
         ## Extract snorkel labels
-        abnormal_transactions = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}')[["ACCESSION_NUMBER", "TRANS_SK", "TRANS_CODE", "TRANS_ACQUIRED_DISP_CD", "snorkel_prob", "snorkel_pred"]]
-        abnormal_transactions = abnormal_transactions.rename(columns={"snorkel_prob" : "probability", "snorkel_pred" : "prediction"})
+        abnormal_transactions = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}', index_col=0)[["ACCESSION_NUMBER", "TRANS_SK", "TRANS_CODE", "TRANS_ACQUIRED_DISP_CD"]]
         df_features = abnormal_transactions.copy()
         
         ##############################

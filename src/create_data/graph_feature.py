@@ -34,7 +34,7 @@ def create_features():
     # Checks if the file is found
     if FINAL_FILE in current_compiled_files:
         print("=== Graph Key file is found. Extracting ===")
-        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}', parse_dates=['TRANS_DATE'])
+        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}', parse_dates=['TRANS_DATE'], index_col=0)
     else: # Create features and save
         print("=== Graph Key file not found, begin creating  ===")
         
@@ -149,7 +149,7 @@ def create_features():
         ]
 
         # Load the CSV file
-        df_relationships = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/{MERGED_RELATIONSHIP_FILE}")
+        df_relationships = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/{MERGED_RELATIONSHIP_FILE}", index_col=0)
 
         # Drop the specified columns
         df_relationships = df_relationships.drop(columns=cols_to_drop, errors='ignore')
@@ -157,7 +157,7 @@ def create_features():
         #lowercase for merging
         df_relationships['entity1_name'] = df_relationships['entity1_name'].str.lower().str.strip()
 
-        matches = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/name_match_improved.csv')
+        matches = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/name_match_improved.csv', index_col=0)
 
         threshold = 7.5 # for matching score 
         matches = matches[matches['score'] >= threshold]
@@ -179,7 +179,7 @@ def create_features():
         merged_entity['cat_is_board'] = merged_entity['cat_is_board'].fillna(False)
         merged_entity['is_current'] = merged_entity['is_current'].fillna(False)
 
-        df_form4 = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}')
+        df_form4 = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}', index_col=0)
 
         # Only looking at 1 RPTOWNER for now
         df_form4 = df_form4[df_form4['NUM_RPTOWNERCIK'] == 1]

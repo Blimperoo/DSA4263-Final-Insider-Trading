@@ -46,18 +46,18 @@ def create_time_independent_features():
     # Checks if the file is found
     if FINAL_FILE_1 in current_compiled_files:
         print("=== Network time_independent_features file is found. Extracting ===")
-        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE_1}')
+        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE_1}', index_col=0)
     else: # Create features and save
         print("=== Network time_independent_features file not found, begin creating  ===")
 
         # load relationship data
-        network_df = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/merged_relationships_full.csv') # (1817762, 146)
+        network_df = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/merged_relationships_full.csv', index_col=0) # (1817762, 146)
         if network_df.shape[0] != 1817762:
             print("Network Dataframe expected 1817762 rows but has ", network_df.shape[0])
         else:
             print("Network Dataframe loaded with expected shape: ", network_df.shape)
         # load node data
-        entities = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/entities_merged.csv') # (431898, 65)
+        entities = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/entities_merged.csv', index_col=0) # (431898, 65)
         if entities.shape[0] != 431898:
             print("Entities Dataframe expected 431898 rows but has ", entities.shape[0])
 
@@ -116,7 +116,7 @@ def create_time_independent_features():
         # Merge all features
         ##############################
         # read name_match data
-        name_match = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/final_final_name_match.csv')
+        name_match = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/final_final_name_match.csv', index_col=0)
         name_match = name_match.rename(columns={'SEC_RPTOWNERCIK': 'RPTOWNERCIK_;'})
 
         merge1 = name_match.merge(nodes_lobby, how='left', on='NODEID')
@@ -171,7 +171,7 @@ def create_time_dependent_features():
     # Checks if the file is found
     if FINAL_FILE_2 in current_compiled_files:
         print("=== Network time_dependent_features file is found. Extracting ===")
-        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE_2}')
+        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE_2}', index_col=0)
     else: # Create features and save
         print("=== Network time_dependent_features file not found, begin creating  ===")
         print("--- current code might only create important_connections and full_congress_connections. Please double check --- ")
@@ -180,9 +180,9 @@ def create_time_dependent_features():
         # create transaction to little sis node id match
         ##############################
 
-        df_name_match = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/final_final_name_match.csv")
+        df_name_match = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/final_final_name_match.csv", index_col=0)
         mapping_dict = df_name_match.set_index("SEC_RPTOWNERCIK")["NODEID"].to_dict()
-        df_txns = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}",
+        df_txns = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}, index_col=0",
                       usecols=["TRANS_SK", "ACCESSION_NUMBER", "TRANS_DATE", "RPTOWNERCIK", "ISSUERTRADINGSYMBOL"],
                       parse_dates=["TRANS_DATE"])
         df_txns["id"] = df_txns["RPTOWNERCIK"].map(mapping_dict)
@@ -194,7 +194,7 @@ def create_time_dependent_features():
         #############################
         # load adjacency list to build graph
         ##############################
-        edges_df = pd.read_csv(f"{NETWORK_RAW_FOLDERS}/adjacency_list.csv")
+        edges_df = pd.read_csv(f"{NETWORK_RAW_FOLDERS}/adjacency_list.csv", index_col=0)
         
         adj_list_reconstructed = reconstruct_adj_list(edges_df)
 
@@ -349,7 +349,7 @@ def __create_tic_to_subcomm_mapper():
     return tic_to_subcomm_mapper
     
 def __create_congress_date_subcomm_mapper():
-    df_house = pd.read_csv(f"{NETWORK_RAW_FOLDERS}/house.csv")
+    df_house = pd.read_csv(f"{NETWORK_RAW_FOLDERS}/house.csv", index_col=0)
     df_house = df_house[["ID #", "Date of Assignment", "Date of Termination", "Committee Name"]].copy()
 
     # Convert dates to datetime (adjust dayfirst if needed)

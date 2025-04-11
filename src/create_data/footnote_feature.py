@@ -52,7 +52,7 @@ def create_features():
     # Checks if the file is found
     if FINAL_FILE in current_compiled_files:
         print("=== Footnote Key file is found. Extracting ===")
-        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}')
+        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}', index_col=0)
     
     # Creates the footnote compilation
     elif FOOTNOTE_FILE in current_compiled_sec_submissions:

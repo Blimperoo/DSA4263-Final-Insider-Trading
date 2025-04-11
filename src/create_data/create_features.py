@@ -43,9 +43,9 @@ NETWORK_TIME_DEP_FEATURE = ['important_connections', 'full_congress_connections'
                             'house_t2_full_congress_connections', 'house_t1_important_connections', 'house_t1_full_congress_connections']
 FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE + NETWORK_TIME_IND_FEATURE + NETWORK_TIME_DEP_FEATURE
 
-IMPORTANT_KEYS = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;"]
+IMPORTANT_KEYS = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;", "TRANS_CODE", "effective_CAR_120_after"]
 PROBABILITY = ['snorkel_prob']
-PREDICTION = ['snorkel_pred']
+PREDICTION = ['y_pred']
 
 class Feature_Data_Creator:
     def __init__(self):
@@ -75,7 +75,7 @@ class Feature_Data_Creator:
         
         if (FINAL_FEATURES_FILE in processed_folder):
             print("=== Final features file present ===")
-            load_data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', parse_dates=['TRANS_DATE'])
+            load_data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', parse_dates=['TRANS_DATE'], index_col=0)
             self.data = load_data
         else:
             print("=== Final features file not found. Begin creating ===")
