@@ -19,6 +19,9 @@ ABNORMAL_CSV = folder_location.ABNORMAL_CSV
 FEATURES_FOLDER = folder_location.FEATURES_DATA_FOLDER
 FINAL_FILE = "transaction_code.csv"
 
+FEATURES_TO_KEEP = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'gb_bin']
+KEY = ["ACCESSION_NUMBER", "TRANS_SK"]
+
 def create_features():
     """This function will create the key-feature transaction key if file is not found and then return this Datafram
 
@@ -47,7 +50,7 @@ def create_features():
         df_features["js_bin"] = np.where((df_features["TRANS_ACQUIRED_DISP_CD"].str.upper() == "D") & (df_features["TRANS_CODE"].str.upper() == "J"), 1, 0)
 
         ## Create a binary variable to extract Transcode Not J or S but Trans Acquired = D which is sell but non S or J coded
-        df_features["os_bin"] = np.where((~df_features["TRANS_CODE"].str.upper().isin(["S", "J"])) & (df_features["TRANS_ACQUIRED_DISP_CD"].str.upper() == "D"), 1, 0)
+        df_features["os_bin"] = np.where((~df_features["TRANS_CODE"].str.upper().isin(["S", "J", "G"])) & (df_features["TRANS_ACQUIRED_DISP_CD"].str.upper() == "D"), 1, 0)
 
         ## Create a binary variable to extract Transcode = S which is sell and Acquired disp cd = D (Regular Sell)
         df_features["s_bin"] = np.where((df_features["TRANS_CODE"].str.upper() == "S") & (df_features["TRANS_ACQUIRED_DISP_CD"].str.upper() == "D" ), 1, 0)
@@ -63,22 +66,19 @@ def create_features():
         df_features["jb_bin"] = np.where((df_features["TRANS_ACQUIRED_DISP_CD"].str.upper() == "A") & (df_features["TRANS_CODE"].str.upper() == "J"), 1, 0)
 
         ## Create a binary variable to extract Transcode Not J or P but Trans Acquired = A which is buy but non P or J coded
-        df_features["ob_bin"] = np.where((~df_features["TRANS_CODE"].str.upper().isin(["P", "J"])) & (df_features["TRANS_ACQUIRED_DISP_CD"].str.upper() == "A"), 1, 0)
+        df_features["ob_bin"] = np.where((~df_features["TRANS_CODE"].str.upper().isin(["P", "J", "G"])) & (df_features["TRANS_ACQUIRED_DISP_CD"].str.upper() == "A"), 1, 0)
 
         ##############################
         # GIFTS
         ##############################
 
         ## Create a binary variable to extract if Transcode = G which is a gift or not
-        df_features["g_bin"] = np.where(df_features["TRANS_CODE"].str.upper() == "G", 1, 0)
+        df_features["gb_bin"] = np.where((df_features["TRANS_CODE"].str.upper() == "G") & (df_features["TRANS_ACQUIRED_DISP_CD"].str.upper() == "A"), 1, 0)
         
         ##############################
         # Save file
         ##############################
-        features_to_keep = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'g_bin']
-        key = ["ACCESSION_NUMBER", "TRANS_SK"]
-
-        df_to_save = df_features[features_to_keep + key]
+        df_to_save = df_features[FEATURES_TO_KEEP + KEY]
         df_to_save.to_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}')
         df_to_return = df_to_save
 
