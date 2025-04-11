@@ -180,9 +180,9 @@ class Feature_Data_Creator:
 
         # EMILY TO REMOVE HARD CODED CHANGE AFTER ADDING SNORKEL LABEL PARTS
         ################################################################################ 
-        if "RPTOWNERCIK" in self.data.columns and 'RPTOWNERCIK_;' in key_columns:
-            print("column is renamed. PLEASE CHANGE THIS ASAP")
-            self.data.rename(columns={'RPTOWNERCIK': 'RPTOWNERCIK_;'}, inplace=True)
+        #if "RPTOWNERCIK" in self.data.columns and 'RPTOWNERCIK_;' in key_columns:
+        #    print("column is renamed. PLEASE CHANGE THIS ASAP")
+        #    self.data.rename(columns={'RPTOWNERCIK': 'RPTOWNERCIK_;'}, inplace=True)
 
         data = pd.merge(
             self.data,
