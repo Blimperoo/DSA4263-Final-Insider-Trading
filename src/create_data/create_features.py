@@ -43,7 +43,7 @@ NETWORK_TIME_DEP_FEATURE = ['important_connections', 'full_congress_connections'
                             'house_t2_full_congress_connections', 'house_t1_important_connections', 'house_t1_full_congress_connections']
 FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE + NETWORK_TIME_IND_FEATURE + NETWORK_TIME_DEP_FEATURE
 
-IMPORTANT_KEYS = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;", "TRANS_CODE", "effective_CAR_120_after"]
+IMPORTANT_KEYS = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;", "TRANS_CODE"]
 PROBABILITY = ['snorkel_prob']
 PREDICTION = ['y_pred']
 
