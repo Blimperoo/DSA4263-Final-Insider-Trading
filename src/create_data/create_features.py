@@ -75,7 +75,7 @@ class Feature_Data_Creator:
         
         if (FINAL_FEATURES_FILE in processed_folder):
             print("=== Final features file present ===")
-            load_data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', parse_dates=['TRANS_DATE'], index_col=0)
+            load_data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', parse_dates=['TRANS_DATE'])
             self.data = load_data
         else:
             print("=== Final features file not found. Begin creating ===")
@@ -214,5 +214,5 @@ class Feature_Data_Creator:
                 list_of_savable_features.append(column)
         
         create_data = create_data[list_of_savable_features]
-        create_data.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}')
+        create_data.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', index=False)
         self.data = create_data

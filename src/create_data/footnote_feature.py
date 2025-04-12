@@ -105,7 +105,7 @@ def create_features():
         for feature in features_to_keep:
             df_to_save[feature] = df_to_save[feature].fillna(0)
         
-        df_to_save.to_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}')
+        df_to_save.to_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}', index=False)
         df_to_return = df_to_save
         
         

@@ -31,11 +31,11 @@ def create_features():
     # Checks if the file is found
     if FINAL_FILE in current_compiled_files:
         print("=== Other Features Key file is found. Extracting ===")
-        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}', index_col=0)
+        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}')
     else: # Create features and save
         print("=== Other Features Key file not found, begin creating  ===")
         
-        trans_score_df = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}', parse_dates=['TRANS_DATE'], index_col=0)
+        trans_score_df = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}', parse_dates=['TRANS_DATE'])
 
         # ensure no NA values and get initial num_rows
         assert trans_score_df['TRANS_ACQUIRED_DISP_CD'].isna().sum() == 0
@@ -317,7 +317,7 @@ def create_features():
         key = ["ACCESSION_NUMBER", "TRANS_SK"]
 
         df_to_save = trans_score_df[features_to_keep + key]
-        df_to_save.to_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}')
+        df_to_save.to_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}', index=False)
         df_to_return = df_to_save
 
     return df_to_return

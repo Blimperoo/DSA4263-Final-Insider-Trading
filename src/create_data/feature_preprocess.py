@@ -41,9 +41,9 @@ PREDICTION = create_features.PREDICTION
 
 
 
-class Feature_Data_Creator:
+class Feature_Preprocessor:
     def __init__(self):
-        self.data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', parse_dates=['TRANS_DATE'], index_col=0)
+        self.data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', parse_dates=['TRANS_DATE'])
         self.initial_rows = self.data.shape[0]
         
         ## Combined features
@@ -61,10 +61,7 @@ class Feature_Data_Creator:
         for column in relevant_data.columns:
             if column in features:
                 found_features.append(column)
-        
-        relevant_data = relevant_data[found_features + PROBABILITY + PREDICTION + ["TRANS_DATE", "TRANS_CODE"]]
-        self.data = relevant_data
-        
+    
         for column in found_features:
             self.preprocess(column)
         
@@ -119,39 +116,44 @@ class Feature_Data_Creator:
 # Create training and testing data
 ################################################################################
 
-    def create_training_testing(self, quantile = 0.80):
+    def create_training_testing(self, quantile = 0.80, split_days = 60):
         """ Creates training and testing split by transaction date based on quantile
         """
         
         print(f"=== Begin creating based on quantile: {quantile}")
         curr_data = self.data.copy()
         date_to_split = curr_data['TRANS_DATE'].quantile(quantile)
+        date_to_split_high = date_to_split + pd.Timedelta(split_days, unit='D')
+        data_to_split_low = date_to_split - pd.Timedelta(split_days, unit='D')
         
-        training_data = curr_data[curr_data['TRANS_DATE'] < date_to_split].drop(columns=["TRANS_DATE", "TRANS_CODE"])
-        testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split].drop(columns=["TRANS_DATE", "TRANS_CODE"])
+        training_data = curr_data[curr_data['TRANS_DATE'] <= data_to_split_low].drop(columns=["TRANS_DATE", "TRANS_CODE"])
+        testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split_high].drop(columns=["TRANS_DATE", "TRANS_CODE"])
         
         print("=== Saving Training and Testing ===")
-        training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TRAINING_FILE}")
-        testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TESTING_FILE}")
+        training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TRAINING_FILE}", index=False)
+        testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TESTING_FILE}", index=False)
 
 ################################################################################
 # Create training and testing data for baseline model
 ################################################################################
 
-    def baseline_create_training_testing(self, quantile = 0.80):
+    def baseline_create_training_testing(self, quantile = 0.80, split_days = 60):
         """ Creates baseline model training and testing split by transaction date based on quantile
         """
         
         print(f"=== Begin creating based on quantile: {quantile}")
         curr_data = self.data.copy()
         date_to_split = curr_data['TRANS_DATE'].quantile(quantile)
+        date_to_split_high = date_to_split + pd.Timedelta(split_days, unit='D')
+        data_to_split_low = date_to_split - pd.Timedelta(split_days, unit='D')
         
-        training_data = curr_data[curr_data['TRANS_DATE'] < date_to_split].drop(columns=["TRANS_DATE"])
-        testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split].drop(columns=["TRANS_DATE"])
+        training_data = curr_data[curr_data['TRANS_DATE'] <= data_to_split_low].drop(columns=["TRANS_DATE"])
+        testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split_high].drop(columns=["TRANS_DATE"])
         
         print("=== Saving baseline Training and Testing ===")
         
         BASELINE_TRAINING_FILE = "training_full_features_baseline.csv"
         BASELINE_TESTING_FILE = "testing_full_features_baseline.csv"
-        training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{BASELINE_TRAINING_FILE}")
-        testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{BASELINE_TESTING_FILE}")    
+        training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{BASELINE_TRAINING_FILE}", index=False)
+        testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{BASELINE_TESTING_FILE}", index=False)
+        
