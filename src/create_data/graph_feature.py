@@ -34,7 +34,7 @@ def create_features():
     # Checks if the file is found
     if FINAL_FILE in current_compiled_files:
         print("=== Graph Key file is found. Extracting ===")
-        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}', parse_dates=['TRANS_DATE'])
+        df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}', parse_dates=['TRANS_DATE'], index_col=0)
     else: # Create features and save
         print("=== Graph Key file not found, begin creating  ===")
         
@@ -568,7 +568,7 @@ def create_features():
 
 
         df_to_save = final_summary[features_to_keep + key]
-        df_to_save.to_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}')
+        df_to_save.to_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}', index=False)
         df_to_return = df_to_save
 
     return df_to_return
