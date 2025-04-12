@@ -125,7 +125,7 @@ def create_time_independent_features():
         df_to_return = merge2.merge(donation_rs, how='left', on='NODEID')
         assert df_to_return.shape[0] == merge2.shape[0] # each row is a unique entity id
 
-        df_to_return.to_csv(f'{FEATURES_FOLDER}/{FINAL_FILE_1}') # there are only 5 columns
+        df_to_return.to_csv(f'{FEATURES_FOLDER}/{FINAL_FILE_1}', index=False) # there are only 5 columns
 
     return df_to_return
 

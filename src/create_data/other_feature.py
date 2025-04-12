@@ -317,7 +317,7 @@ def create_features():
         key = ["ACCESSION_NUMBER", "TRANS_SK"]
 
         df_to_save = trans_score_df[features_to_keep + key]
-        df_to_save.to_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}')
+        df_to_save.to_csv(f'{FEATURES_FOLDER}/{FINAL_FILE}', index=False)
         df_to_return = df_to_save
 
     return df_to_return

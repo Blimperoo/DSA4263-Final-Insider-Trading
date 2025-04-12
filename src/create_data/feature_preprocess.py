@@ -31,9 +31,9 @@ FOOTNOTE_FEATURE = create_features.FOOTNOTE_FEATURE
 GRAPH_FEATURE = create_features.GRAPH_FEATURE
 OTHER_FEATURE = create_features.OTHER_FEATURE
 NETWORK_TIME_IND_FEATURE = create_features.NETWORK_TIME_IND_FEATURE
-NETWORK_FEATURE = create_features.NETWORK_FEATURE
+NETWORK_TIME_DEP_FEATURE = create_features.NETWORK_TIME_DEP_FEATURE
 
-FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE + NETWORK_TIME_IND_FEATURE + NETWORK_FEATURE
+FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE + NETWORK_TIME_IND_FEATURE + NETWORK_TIME_DEP_FEATURE
 IMPORTANT_KEYS = create_features.IMPORTANT_KEYS
 
 PROBABILITY = create_features.PROBABILITY
@@ -41,7 +41,7 @@ PREDICTION = create_features.PREDICTION
 
 
 
-class Feature_Data_Creator:
+class Feature_Preprocessor:
     def __init__(self):
         self.data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', parse_dates=['TRANS_DATE'])
         self.initial_rows = self.data.shape[0]
@@ -52,23 +52,18 @@ class Feature_Data_Creator:
 ################################################################################
 # Extract found features
 ################################################################################
-    def extract(self):
+    def extract(self, features=FEATURES):
         """Extract found features in feature columns and then preprocess it. Then finally create training and testing
         """
         relevant_data = self.data.copy()
         found_features = []
         
         for column in relevant_data.columns:
-            if column in FEATURES:
+            if column in features:
                 found_features.append(column)
-        
-        relevant_data = relevant_data[found_features + PROBABILITY + PREDICTION + ["TRANS_DATE"]]
-        self.data = relevant_data
-        
+    
         for column in found_features:
             self.preprocess(column)
-            
-        self.create_training_testing()
         
 ################################################################################
 # Preprocess features
@@ -83,7 +78,7 @@ class Feature_Data_Creator:
         print(f"preprocess {feature} with type {relevant_data[feature].dtypes}")
         
         # Check if one hot encoding is needed
-        if relevant_data[feature].dtypes == object:
+        if feature == "TRANS_CODE" or relevant_data[feature].dtypes == object:
             data_to_replace = pd.get_dummies(relevant_data, columns=[feature], dtype=int)
         
         # If is int or float
@@ -121,25 +116,44 @@ class Feature_Data_Creator:
 # Create training and testing data
 ################################################################################
 
-    def create_training_testing(self, quantile = 0.80):
+    def create_training_testing(self, quantile = 0.80, split_days = 60):
         """ Creates training and testing split by transaction date based on quantile
         """
-        features_folder = os.listdir(PROCESSED_DATA_FOLDER)
         
-        if (TRAINING_FILE not in features_folder) or (TESTING_FILE not in features_folder):
-            print(f"=== Training or Testing file not found. Begin creating based on quantile: {quantile}")
-            curr_data = self.data.copy()
-            date_to_split = curr_data['TRANS_DATE'].quantile(quantile)
-            
-            training_data = curr_data[curr_data['TRANS_DATE'] < date_to_split].drop(columns=["TRANS_DATE"])
-            testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split].drop(columns=["TRANS_DATE"])
-            
-            print("=== Saving Training and Testing ===")
-            training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TRAINING_FILE}")
-            testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TESTING_FILE}")
-        else:
-            print("=== Training and Testing file present ===")
-            # self.data.to_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}')
-    
-Feature_Data_Creator().extract()
+        print(f"=== Begin creating based on quantile: {quantile}")
+        curr_data = self.data.copy()
+        date_to_split = curr_data['TRANS_DATE'].quantile(quantile)
+        date_to_split_high = date_to_split + pd.Timedelta(split_days, unit='D')
+        data_to_split_low = date_to_split - pd.Timedelta(split_days, unit='D')
+        
+        training_data = curr_data[curr_data['TRANS_DATE'] <= data_to_split_low].drop(columns=["TRANS_DATE", "TRANS_CODE"])
+        testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split_high].drop(columns=["TRANS_DATE", "TRANS_CODE"])
+        
+        print("=== Saving Training and Testing ===")
+        training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TRAINING_FILE}", index=False)
+        testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TESTING_FILE}", index=False)
+
+################################################################################
+# Create training and testing data for baseline model
+################################################################################
+
+    def baseline_create_training_testing(self, quantile = 0.80, split_days = 60):
+        """ Creates baseline model training and testing split by transaction date based on quantile
+        """
+        
+        print(f"=== Begin creating based on quantile: {quantile}")
+        curr_data = self.data.copy()
+        date_to_split = curr_data['TRANS_DATE'].quantile(quantile)
+        date_to_split_high = date_to_split + pd.Timedelta(split_days, unit='D')
+        data_to_split_low = date_to_split - pd.Timedelta(split_days, unit='D')
+        
+        training_data = curr_data[curr_data['TRANS_DATE'] <= data_to_split_low].drop(columns=["TRANS_DATE"])
+        testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split_high].drop(columns=["TRANS_DATE"])
+        
+        print("=== Saving baseline Training and Testing ===")
+        
+        BASELINE_TRAINING_FILE = "training_full_features_baseline.csv"
+        BASELINE_TESTING_FILE = "testing_full_features_baseline.csv"
+        training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{BASELINE_TRAINING_FILE}", index=False)
+        testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{BASELINE_TESTING_FILE}", index=False)
         
