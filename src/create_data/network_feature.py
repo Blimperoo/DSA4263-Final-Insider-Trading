@@ -183,9 +183,9 @@ def create_time_dependent_features():
         df_name_match = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/final_final_name_match.csv")
         mapping_dict = df_name_match.set_index("SEC_RPTOWNERCIK")["NODEID"].to_dict()
         df_txns = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}",
-                      usecols=["TRANS_SK", "ACCESSION_NUMBER", "TRANS_DATE", "RPTOWNERCIK", "ISSUERTRADINGSYMBOL"],
+                      usecols=["TRANS_SK", "ACCESSION_NUMBER", "TRANS_DATE", "RPTOWNERCIK_;", "ISSUERTRADINGSYMBOL"],
                       parse_dates=["TRANS_DATE"])
-        df_txns["id"] = df_txns["RPTOWNERCIK"].map(mapping_dict)
+        df_txns["id"] = df_txns["RPTOWNERCIK_;"].map(mapping_dict)
         df_txns.sort_values(["id","TRANS_DATE"], inplace=True)
         if df_txns.shape != (3171001, 6):
             print("Transaction Dataframe expected 3171001 rows 6 columns but has ", df_txns.shape)
