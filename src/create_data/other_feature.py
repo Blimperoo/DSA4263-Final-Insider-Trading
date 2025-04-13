@@ -80,13 +80,13 @@ def create_features():
         ##############################
         # relative_trade_size_to_self
         ##############################
-        trans_score_df.sort_values(by=['RPTOWNERCIK', 'TRANS_DATE'], inplace=True)
+        trans_score_df.sort_values(by=['RPTOWNERCIK_;', 'TRANS_DATE'], inplace=True)
         def calc_group_avg_past(x):
             return x.expanding().mean().shift(1)
 
         trans_score_df['avg_trans_shares_past'] = (
-            trans_score_df.sort_values(['RPTOWNERCIK', 'TRANS_DATE'])
-                            .groupby('RPTOWNERCIK')['TRANS_SHARES']
+            trans_score_df.sort_values(['RPTOWNERCIK_;', 'TRANS_DATE'])
+                            .groupby('RPTOWNERCIK_;')['TRANS_SHARES']
                             .transform(calc_group_avg_past)
         )
 

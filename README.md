@@ -49,7 +49,13 @@ mkdir -p data_untracked/raw/sec_submissions/interim \
          │   │   └── trans_ars/                        # Abnormal return calculations (batched)
          │   │       └── ...
          │   |
-         │   └── profile_data/                         # Other firm or insider profile information
+         │   └── profile_data/
+         │       ├── adjacency_list.csv                 # Adjacency list of the network   
+         │       ├── congress_date_subcomm_mapper.pkl           
+         │       ├── house_membership_by_date.pkl
+         │       ├── tic_to_subcomm_mapper.pkl
+         │       ├── TIC to SIC.xlsx
+         │       ├── house.csv
          │
          ├── processed/
          │   ├── transactions_final.csv                                # Merged transaction data from SEC Form 4 (3546490, 24)
