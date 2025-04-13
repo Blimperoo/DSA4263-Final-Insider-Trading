@@ -46,8 +46,8 @@ mkdir -p data_untracked/raw/sec_submissions/interim \
          │   │   │       └── part_5.csv
          │   │   ├── fred/
          │   │   │   └── risk_free_rate_daily.csv      # FRED risk-free rate data
-         │   │   └── trans_ars/                        # Abnormal return calculations (batched)
-         │   │       └── ...
+         │   │   └── trans_ars/                        
+         │   │       └── ...                           # Abnormal return calculations will be generated here (batched)
          │   |
          │   └── profile_data/
          │       ├── adjacency_list.csv                 # Adjacency list of the network   
@@ -60,26 +60,23 @@ mkdir -p data_untracked/raw/sec_submissions/interim \
          │       ├── mapping_CIK2Node_txn_dict.pkl      # txns_for_features.csv in pickle format
          │       ├── congress_matches_7apr_603pm.csv    # Contains member's name and littlesis nodeid
          │       ├── senate_ass.csv                     # Generates congress_date_subcomm_mapper dictionary
-         │       ├──manual_fill.csv                     # Contains manual corrections
-         │       ├──entities_merged.csv                 # Littlesis data
-         │       ├──all_matched_bioguide.csv            # csv version of congress_nodeid_mapper.pkl
-         │       ├──congress_nodeid_mapper.pkl          # Bioguide matching
-         │       ├──sen_tic_to_subcomm_mapper.pkl       # Ticker to Senate committee mapping
+         │       ├── manual_fill.csv                    # Contains manual corrections
+         │       ├── entities_merged.csv                # Littlesis data
+         │       ├── all_matched_bioguide.csv           # csv version of congress_nodeid_mapper.pkl
+         │       ├── congress_nodeid_mapper.pkl         # Bioguide matching
+         │       ├── sen_tic_to_subcomm_mapper.pkl      # Ticker to Senate committee mapping
          │       ├── house_date_subcomm_mapper.pkl      # Maps each House subcommittee name to its membership timeline
          │       ├── senate_date_subcomm_mapper.pkl     # Maps each Senate subcommittee name to its membership timeline
-         │       ├── senate_membership_by_date.pkl      # Maps dates to a list of active Senate member nodeIDs
+         │       └── senate_membership_by_date.pkl      # Maps dates to a list of active Senate member nodeIDs
          │
          ├── processed/
          │   ├── transactions_final.csv                                # Merged transaction data from SEC Form 4 (3546490, 24)
          │   ├── transactions_abnormal_returns.csv                     # Transactions with calculated abnormal returns (3171001, 46)
          │   ├── transactions_abnormal_returns_anomaly_score.csv       # Adds anomaly score partial labels (3171001, 83)
          │   ├── merged_txns_SNORKEL.csv                               # Adds labels from Snorkel labeling functions
-         │   ├── name_matched_improved.csv                             # Form 4 to LittleSis Name Match
          │   ├── merged_relationships_full.csv                         # Network data
-         │   └── ground_truth_matching_keys.csv                        # Ground truth 
-         transactions caught and flagged by SEC
+         │   ├── ground_truth_matching_keys.csv                        # Ground truth transactions caught and flagged by SEC
          │   └── final_final_name_match.csv                            # Stores the [“SEC_RPTOWNERCIK”, “id”]
-         │   └── txns_for_features.csv                                 # Stores the list of transactions with ids
          │
          ├── features/                                                 
          │   ├── footnote_word_count_feature.csv
