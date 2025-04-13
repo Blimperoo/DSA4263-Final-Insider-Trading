@@ -40,7 +40,7 @@ mkdir -p data_untracked/raw/sec_submissions/interim \
          │   │   │   │   ├── AAPL.csv
          │   │   │   │   ├── MSFT.csv
          │   │   │   │   └── ...
-         │   │   │   └── daily_beta_split/             # Batched beta calculation data
+         │   │   │   └── split_csv_parts/             # Batched beta calculation data
          │   │   │       ├── part_1.csv
          │   │   │       ├── ...
          │   │   │       └── part_5.csv
