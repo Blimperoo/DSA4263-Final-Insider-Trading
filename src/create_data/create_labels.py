@@ -22,7 +22,7 @@ from path_location import folder_location
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 
-FINAL_FILE = folder_location.ABNORMAL_CSV
+FINAL_FILE = folder_location.TRANSACTIONS_LABELLED_FILE
 
 class Label_Data_Creator:
     def __init__(self):
