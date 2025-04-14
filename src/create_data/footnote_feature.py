@@ -21,7 +21,7 @@ if parent_dir not in sys.path:
 from path_location import folder_location
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
-ABNORMAL_CSV = folder_location.ABNORMAL_CSV
+TRANSACTIONS_LABELLED_FILE = folder_location.TRANSACTIONS_LABELLED_FILE
 
 SEC_DATA_FOLDER = folder_location.SEC_DATA_FOLDER
 FOOTNOTE_FILE = folder_location.FOOTNOTE_FILE
@@ -63,7 +63,7 @@ def create_features():
         ##############################
         # Merging footnotes together for the same ACCESSION_NUMBER
         ##############################
-        accession_number_in_final = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}')[["ACCESSION_NUMBER"]].drop_duplicates()
+        accession_number_in_final = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{TRANSACTIONS_LABELLED_FILE}')[["ACCESSION_NUMBER"]].drop_duplicates()
         acc = accession_number_in_final["ACCESSION_NUMBER"]
         
         

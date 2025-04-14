@@ -15,7 +15,7 @@ if parent_dir not in sys.path:
 from path_location import folder_location
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
-ABNORMAL_CSV = folder_location.ABNORMAL_CSV
+TRANSACTIONS_LABELLED_FILE = folder_location.TRANSACTIONS_LABELLED_FILE
 
 FEATURES_FOLDER = folder_location.FEATURES_DATA_FOLDER
 FINAL_FILE = "other_feature.csv"
@@ -35,7 +35,7 @@ def create_features():
     else: # Create features and save
         print("=== Other Features Key file not found, begin creating  ===")
         
-        trans_score_df = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}', parse_dates=['TRANS_DATE'])
+        trans_score_df = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{TRANSACTIONS_LABELLED_FILE}', parse_dates=['TRANS_DATE'])
 
         # ensure no NA values and get initial num_rows
         assert trans_score_df['TRANS_ACQUIRED_DISP_CD'].isna().sum() == 0

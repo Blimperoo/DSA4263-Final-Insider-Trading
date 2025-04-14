@@ -17,7 +17,7 @@ if parent_dir not in sys.path:
 from path_location import folder_location
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
-ABNORMAL_CSV = folder_location.ABNORMAL_CSV
+TRANSACTIONS_LABELLED_FILE = folder_location.TRANSACTIONS_LABELLED_FILE
 MERGED_RELATIONSHIP_FILE = folder_location.MERGED_RELATIONSHIP_FILE
 
 FEATURES_FOLDER = folder_location.FEATURES_DATA_FOLDER
@@ -179,7 +179,7 @@ def create_features():
         merged_entity['cat_is_board'] = merged_entity['cat_is_board'].fillna(False)
         merged_entity['is_current'] = merged_entity['is_current'].fillna(False)
 
-        df_form4 = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}')
+        df_form4 = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{TRANSACTIONS_LABELLED_FILE}')
 
         # Only looking at 1 RPTOWNER for now
         df_form4 = df_form4[df_form4['NUM_RPTOWNERCIK'] == 1]

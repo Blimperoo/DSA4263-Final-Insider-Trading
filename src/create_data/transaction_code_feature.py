@@ -14,7 +14,7 @@ if parent_dir not in sys.path:
 from path_location import folder_location
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
-ABNORMAL_CSV = folder_location.ABNORMAL_CSV
+TRANSACTIONS_LABELLED_FILE = folder_location.TRANSACTIONS_LABELLED_FILE
 
 FEATURES_FOLDER = folder_location.FEATURES_DATA_FOLDER
 FINAL_FILE = "transaction_code.csv"
@@ -38,7 +38,7 @@ def create_features():
         print("=== Transaction Key file not found, begin creating  ===")
         
         ## Extract snorkel labels
-        abnormal_transactions = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}')[["ACCESSION_NUMBER", "TRANS_SK", "TRANS_CODE", "TRANS_ACQUIRED_DISP_CD"]]
+        abnormal_transactions = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{TRANSACTIONS_LABELLED_FILE}')[["ACCESSION_NUMBER", "TRANS_SK", "TRANS_CODE", "TRANS_ACQUIRED_DISP_CD"]]
         df_features = abnormal_transactions.copy()
         
         ##############################
