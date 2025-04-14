@@ -12,7 +12,7 @@ if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
 from path_location import folder_location
-import create_features
+from create_features import features
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 
@@ -26,19 +26,19 @@ TESTING_FILE = folder_location.TESTING_FULL_FEATURES_FILE
 
 FEATURES_PROCESSED = "full_features_processed.csv"
 
-TRANSACTION_CODE_FEATURE = create_features.TRANSACTION_CODE_FEATURE
-FOOTNOTE_FEATURE = create_features.FOOTNOTE_FEATURE
-GRAPH_FEATURE = create_features.GRAPH_FEATURE
-OTHER_FEATURE = create_features.OTHER_FEATURE
-NETWORK_TIME_IND_FEATURE = create_features.NETWORK_TIME_IND_FEATURE
-NETWORK_TIME_DEP_FEATURE = create_features.NETWORK_TIME_DEP_FEATURE
+TRANSACTION_CODE_FEATURE = features.TRANSACTION_CODE_FEATURE
+FOOTNOTE_FEATURE = features.FOOTNOTE_FEATURE
+GRAPH_FEATURE = features.GRAPH_FEATURE
+OTHER_FEATURE = features.OTHER_FEATURE
+NETWORK_TIME_IND_FEATURE = features.NETWORK_TIME_IND_FEATURE
+NETWORK_TIME_DEP_FEATURE = features.NETWORK_TIME_DEP_FEATURE
 
 
-FEATURES = create_features.FEATURES
-IMPORTANT_KEYS = create_features.IMPORTANT_KEYS
+FEATURES = features.FEATURES
+IMPORTANT_KEYS = features.IMPORTANT_KEYS
 
-PROBABILITY = create_features.PROBABILITY
-PREDICTION = create_features.PREDICTION
+PROBABILITY = features.PROBABILITY
+PREDICTION = features.PREDICTION
 
 
 
