@@ -138,20 +138,24 @@ As the dataset is too large for github to handle, this project's data is linked 
          src/
          ├── path_location/
          │   └── folder_location.py/                # Script contains path for folders and csv in data untracked 
-         |
+         │
          ├── extract_data/
          │   └── extract.py/                        # Script to extract SEC form 4 contents
-         |
-         ├── create_data/                           # Folder that involves creating features, labels and preprocessing 
-         │   ├── create_features.py                 # Contains class to create all features  
-         │   ├── create_labels.py                   # Contains class to create labels for data
-         │   ├── feature_preprocess.py              # Contains class to preprocesses unclean features to be useable and create training testing
+         │
+         ├── create_labels/
+         │   └── labels.py/                         # Contains class to create labels for data
+         │
+         ├── create_features/                       # Folder that involves creating features, labels and preprocessing 
+         │   ├── features.py                        # Contains class to create all features  
          │   ├── footnote_feature.py                # Feature - footnote
          │   ├── graph_feature.py                   # Feature - graph
          │   ├── network_feature.py                 # Feature - network
          │   ├── other_feature.py                   # Feature - other transactions
          │   ├── pagerank_feature.py                # Feature - pagerank
          │   └── transaction_code_feature.py        # Feature - transaction code
+         │
+         ├── preprocess_feature/
+         │   └── preprocess.py/                     # Contains class to preprocesses features to be useable and create training testing
          │
          ├── notebook_references/                              # Folder to see steps on how labels are created
          │   ├── create_labels_1_abnormal_returns.ipynb        
