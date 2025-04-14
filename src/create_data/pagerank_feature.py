@@ -14,7 +14,7 @@ if parent_dir not in sys.path:
 from path_location import folder_location
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
-ABNORMAL_CSV = folder_location.ABNORMAL_CSV
+TRANSACTIONS_LABELLED_FILE = folder_location.TRANSACTIONS_LABELLED_FILE
 
 FEATURES_FOLDER = folder_location.FEATURES_DATA_FOLDER
 FINAL_FILE = "pagerank_feature.csv"
