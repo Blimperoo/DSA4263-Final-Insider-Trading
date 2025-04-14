@@ -58,23 +58,24 @@ class Label_Data_Creator:
     def __calculate_ar_and_car(self):
         '''
         calculates abnormal returns and cumulative abnormal returns for each stock
-        refer to data/calc_abnormal_returns.py for more details
+        refer to notebook_references/calc_abnormal_returns.py for more details
         '''
-        print("---- 1. Calculate abnormal return and cumulative abnormal returns. See ../data/calc_abnormal_returns.ipynb ----")
+        print("---- 1. Calculate abnormal return and cumulative abnormal returns. See ../notebook_references/create_labels_1_abnormal_returns.ipynb ----")
         pass
     
     def __calculate_scores(self):
         '''
         calculates scores for each stock
-        refer to data/calc_anomaly_scores.py for more details
+        refer to notebook_references/calc_anomaly_scores.py for more details
         '''
-        print("---- 2. Calculate anomaly scores for snorkel labelling. See ../data/calc_anomaly_scores.ipynb ----")
+        print("---- 2. Calculate anomaly scores for snorkel labelling. See ../notebook_references/create_labels_2_anomaly_scores.ipynb ----")
         pass
     
     def __run_snorkel(self):
         '''
         runs snorkel to create labels from the scores
+        refer to notebook_references/create_labels_3_snorkel_labelling.py for more details
         '''
-        print("---- 3. Run snorkel labelling. See ../data/run_snorkel_labelling.ipynb ----")
+        print("---- 3. Run snorkel labelling. See ../notebook_references/create_labels_3_snorkel_labelling.ipynb ----")
         pass
     
