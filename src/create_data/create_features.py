@@ -45,9 +45,12 @@ OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_siz
 
 NETWORK_TIME_IND_FEATURE = ['is_lobby', 'has_lobby', 'has_donate', 'NODEID']
 
-NETWORK_TIME_DEP_FEATURE = ['important_connections', 'full_congress_connections', 'sen_important_connections', 'sen_full_congress_connections',
-                            'sen_t2_full_congress_connections', 'sen_t1_important_connections', 'sen_t1_full_congress_connections',	'house_t2_important_connections',
-                            'house_t2_full_congress_connections', 'house_t1_important_connections', 'house_t1_full_congress_connections']
+NETWORK_TIME_DEP_FEATURE = ['important_connections', 'full_congress_connections', 
+                            'house_t2_important_connections', 'house_t2_full_congress_connections', 
+                            'house_t1_important_connections', 'house_t1_full_congress_connections'
+                            'sen_important_connections', 'sen_full_congress_connections', 
+                            'sen_t2_important_connections', 'sen_t2_full_congress_connections', 
+                            'sen_t1_important_connections', 'sen_t1_full_congress_connections']
 
 NETWORK_ZSCORE_FEATURE = ['full_congress_connections_z', 'sen_full_congress_connections_z', 'sen_t2_full_congress_connections_z','house_t2_full_congress_connections_z', 
                           'sen_important_connections_z', 'sen_t2_important_connections_z','important_connections_z', 'house_t2_important_connections_z', 
