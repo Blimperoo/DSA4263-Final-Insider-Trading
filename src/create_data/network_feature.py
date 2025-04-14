@@ -278,7 +278,7 @@ def create_time_dependent_features():
         for file_required in ["house_membership_by_date.pkl", "tic_to_subcomm_mapper.pkl", "house_date_subcomm_mapper.pkl"]:
             if file_required not in network_data:
                 print(f"--- {file_required} file not found. Please download from shared google drive: raw/profile_data/---")
-                print("Alternatively, refer to ../notebook_references/create_network_files.ipynb ----")
+                print("Alternatively, refer to ../notebook_references/create_network_helper_1_time_dep.ipynb ----")
                 return pd.DataFrame()
 
         # Load data 
