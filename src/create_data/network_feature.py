@@ -23,7 +23,7 @@ if parent_dir not in sys.path:
 from path_location import folder_location
 
 PROCESSED_DATA_FOLDER = folder_location.PROCESSED_DATA_FOLDER
-ABNORMAL_CSV = folder_location.ABNORMAL_CSV
+TRANSACTIONS_LABELLED_FILE = folder_location.TRANSACTIONS_LABELLED_FILE
 MERGED_RELATIONSHIP_FILE = folder_location.MERGED_RELATIONSHIP_FILE
 
 FEATURES_FOLDER = folder_location.FEATURES_DATA_FOLDER
@@ -182,7 +182,7 @@ def create_time_dependent_features():
 
         df_name_match = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/final_final_name_match.csv")
         mapping_dict = df_name_match.set_index("SEC_RPTOWNERCIK")["NODEID"].to_dict()
-        df_txns = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/{ABNORMAL_CSV}",
+        df_txns = pd.read_csv(f"{PROCESSED_DATA_FOLDER}/{TRANSACTIONS_LABELLED_FILE}",
                       usecols=["TRANS_SK", "ACCESSION_NUMBER", "TRANS_DATE", "RPTOWNERCIK_;", "ISSUERTRADINGSYMBOL"],
                       parse_dates=["TRANS_DATE"])
         df_txns["id"] = df_txns["RPTOWNERCIK_;"].map(mapping_dict)
