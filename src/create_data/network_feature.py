@@ -279,7 +279,7 @@ def create_time_dependent_features():
             if file_required not in network_data:
                 print(f"--- {file_required} file not found. Please download from shared google drive: raw/profile_data/---")
                 print("Alternatively, refer to ../notebook_references/create_network_files.ipynb ----")
-            return FileNotFoundError(f"--- Aborting ---")
+                return pd.DataFrame()
 
         # Load data 
         house_by_date = load_pickle(f"{NETWORK_RAW_FOLDERS}/house_membership_by_date.pkl")

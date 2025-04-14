@@ -178,7 +178,7 @@ class Feature_Data_Creator:
     def __create_network_features(self):
         
         # First add time_independent_features
-        key_columns = ["RPTOWNERCIK"] 
+        key_columns = ["RPTOWNERCIK_;"] 
         time_ind_features = self.network_time_ind_features
         
         data_to_merge = network_feature.create_time_independent_features()
