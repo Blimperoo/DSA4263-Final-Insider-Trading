@@ -33,7 +33,8 @@ OTHER_FEATURE = create_features.OTHER_FEATURE
 NETWORK_TIME_IND_FEATURE = create_features.NETWORK_TIME_IND_FEATURE
 NETWORK_TIME_DEP_FEATURE = create_features.NETWORK_TIME_DEP_FEATURE
 
-FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE + NETWORK_TIME_IND_FEATURE + NETWORK_TIME_DEP_FEATURE
+
+FEATURES = create_features.FEATURES
 IMPORTANT_KEYS = create_features.IMPORTANT_KEYS
 
 PROBABILITY = create_features.PROBABILITY
@@ -130,8 +131,8 @@ class Feature_Preprocessor:
         testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split_high].drop(columns=["TRANS_DATE", "TRANS_CODE"])
         
         print("=== Saving Training and Testing ===")
-        training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TRAINING_FILE}", index=False)
-        testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TESTING_FILE}", index=False)
+        training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TRAINING_FILE}_unscaled", index=False)
+        testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TESTING_FILE}_unscaled", index=False)
 
 ################################################################################
 # Create training and testing data for baseline model
@@ -156,4 +157,3 @@ class Feature_Preprocessor:
         BASELINE_TESTING_FILE = "testing_full_features_baseline.csv"
         training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{BASELINE_TRAINING_FILE}", index=False)
         testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{BASELINE_TESTING_FILE}", index=False)
-        
