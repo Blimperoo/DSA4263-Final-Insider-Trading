@@ -53,7 +53,7 @@ class Feature_Preprocessor:
 ################################################################################
 # Extract found features
 ################################################################################
-    def extract(self, features=FEATURES):
+    def extract(self, features=FEATURES, scale_data = True):
         """Extract found features in feature columns and then preprocess it. Then finally create training and testing
         """
         relevant_data = self.data.copy()
@@ -64,12 +64,12 @@ class Feature_Preprocessor:
                 found_features.append(column)
     
         for column in found_features:
-            self.preprocess(column)
+            self.preprocess(column, scale_data)
         
 ################################################################################
 # Preprocess features
 ################################################################################ 
-    def preprocess(self, feature):
+    def preprocess(self, feature, scale_data):
         """Preprocess data. If object type then create one hot encoding
            If int or float type then remove fill na with 0, remove infinite and scale to 0 - 1
         Args:
@@ -105,7 +105,7 @@ class Feature_Preprocessor:
                 data_to_replace = relevant_data.copy()
             
             # Check data scaling
-            if (relevant_data[feature].max() != 1 or relevant_data[feature].min() != 0):
+            if scale_data and (relevant_data[feature].max() != 1 or relevant_data[feature].min() != 0):
                 # Scale values to 0 to 1
                 min_val, max_val = relevant_data[feature].min(), relevant_data[feature].max()
                 relevant_data[feature] = relevant_data[feature].apply(lambda x: (x - min_val)/ (max_val - min_val))
@@ -131,8 +131,8 @@ class Feature_Preprocessor:
         testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split_high].drop(columns=["TRANS_DATE", "TRANS_CODE"])
         
         print("=== Saving Training and Testing ===")
-        training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TRAINING_FILE}_unscaled", index=False)
-        testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TESTING_FILE}_unscaled", index=False)
+        training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TRAINING_FILE}", index=False)
+        testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TESTING_FILE}", index=False)
 
 ################################################################################
 # Create training and testing data for baseline model
