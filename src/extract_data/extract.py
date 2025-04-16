@@ -21,15 +21,6 @@ if parent_dir not in sys.path:
 
 from path_location import folder_location
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-
-if script_dir not in sys.path:
-    sys.path.append(script_dir)
-
-parent_dir = os.path.dirname(os.path.abspath(f'{__file__}/..'))
-if parent_dir not in sys.path:
-    sys.path.append(parent_dir)
-
 RAW_DATA_FOLDER = folder_location.SEC_SUBMISSIONS_FOLDER
 PROCESSED_FOLDER = folder_location.PROCESSED_DATA_FOLDER
 
