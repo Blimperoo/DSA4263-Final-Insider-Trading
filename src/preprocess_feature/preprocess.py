@@ -24,11 +24,12 @@ TRAINING_FILE = folder_location.TRAINING_FULL_FEATURES_FILE
 
 TESTING_FILE = folder_location.TESTING_FULL_FEATURES_FILE
 
+PROCESSED_FULL = folder_location.PROCESSED_FULL_FILE
+
 FEATURES_PROCESSED = "full_features_processed.csv"
 
 TRANSACTION_CODE_FEATURE = features.TRANSACTION_CODE_FEATURE
 FOOTNOTE_FEATURE = features.FOOTNOTE_FEATURE
-GRAPH_FEATURE = features.GRAPH_FEATURE
 OTHER_FEATURE = features.OTHER_FEATURE
 NETWORK_TIME_IND_FEATURE = features.NETWORK_TIME_IND_FEATURE
 NETWORK_TIME_DEP_FEATURE = features.NETWORK_TIME_DEP_FEATURE
@@ -60,7 +61,7 @@ class Feature_Preprocessor:
         found_features = []
         
         for column in relevant_data.columns:
-            if column in features:
+            if column in features and column not in IMPORTANT_KEYS:
                 found_features.append(column)
     
         for column in found_features:
@@ -127,12 +128,22 @@ class Feature_Preprocessor:
         date_to_split_high = date_to_split + pd.Timedelta(split_days, unit='D')
         data_to_split_low = date_to_split - pd.Timedelta(split_days, unit='D')
         
-        training_data = curr_data[curr_data['TRANS_DATE'] <= data_to_split_low].drop(columns=["TRANS_DATE", "TRANS_CODE"])
-        testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split_high].drop(columns=["TRANS_DATE", "TRANS_CODE"])
+        training_data = curr_data[curr_data['TRANS_DATE'] <= data_to_split_low].drop(columns=["TRANS_CODE"])
+        testing_data = curr_data[curr_data['TRANS_DATE'] >= date_to_split_high].drop(columns=["TRANS_CODE"])
         
         print("=== Saving Training and Testing ===")
         training_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TRAINING_FILE}", index=False)
         testing_data.to_csv(f"{PROCESSED_DATA_FOLDER}/{TESTING_FILE}", index=False)
+        
+################################################################################
+# Create full dataset without split
+################################################################################
+
+    def create_data_no_split(self):
+        """ Creates training and testing without split 
+        """
+        print("=== Saving Training and Testing ===")
+        self.data.to_csv(f"{PROCESSED_DATA_FOLDER}/{PROCESSED_FULL}", index=False)
 
 ################################################################################
 # Create training and testing data for baseline model

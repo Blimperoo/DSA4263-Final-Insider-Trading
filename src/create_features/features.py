@@ -39,7 +39,7 @@ TRANSACTION_CODE_FEATURE = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'gb_b
 FOOTNOTE_FEATURE = ['gift', 'distribution', 'charity', 'price', 'number', 'ball', 'pursuant', '10b5-1', '16b-3']
 
 OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'beneficial_ownership_score','title_score',
-                 'TRANS_TIMELINESS_clean', 'execution_timeliness', 'filing_lag_days', 'filing_timeliness', 'security_category', 'trans_amt']
+                 'TRANS_TIMELINESS_clean', 'execution_timeliness', 'filing_lag_days', 'filing_timeliness']
 
 NETWORK_TIME_IND_FEATURE = ['is_lobby', 'has_lobby', 'has_donate', 'NODEID']
 
