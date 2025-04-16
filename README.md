@@ -130,9 +130,28 @@ As the dataset is too large for github to handle, this project's data is linked 
 
 ```
 # Code
+The code structure to create datais split into 4 main responsibilities
+* extract
+  * Data_Extractor: Extracts and merges form 4 data
 
+* labels 
+  * Data_Label_Creator: Creates snorkel labels
 
-## code folder structure (`src`)
+* features
+  * Feature_Data_Creator: Creates and merges features
+    * footnote_feature.py
+    * network_feature.py
+    * other_feature.py
+    * transaction_code.py
+
+* preprocess
+  * Feature_Preprocessor: preprocesses data into train and testing
+
+## Code sequence diagram
+
+![src_i_mage](docs/src_diagram.png)
+
+## Code folder structure (`src`)
 
 ```
          src/
