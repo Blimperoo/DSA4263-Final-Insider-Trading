@@ -11,6 +11,7 @@ TRANSACTIONS_LABELLED_FILE = 'merged_txns_SNORKEL.csv'
 FULL_FEATURES_FILE = 'full_features.csv'
 TRAINING_FULL_FEATURES_FILE = 'training_full_features.csv'
 TESTING_FULL_FEATURES_FILE = 'testing_full_features.csv'
+PROCESSED_FULL_FILE = 'processed_full.csv'
 
 #####################
 # Features folder

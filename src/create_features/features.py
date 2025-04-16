@@ -16,7 +16,6 @@ if parent_dir not in sys.path:
     sys.path.append(parent_dir)
 
 import transaction_code_feature
-import graph_feature
 import network_feature
 import footnote_feature
 import pagerank_feature
@@ -38,16 +37,15 @@ TESTING_FILE = folder_location.TESTING_FULL_FEATURES_FILE
 
 TRANSACTION_CODE_FEATURE = ['js_bin', 's_bin','b_bin', 'jb_bin', 'ob_bin', 'gb_bin']
 FOOTNOTE_FEATURE = ['gift', 'distribution', 'charity', 'price', 'number', 'ball', 'pursuant', '10b5-1', '16b-3']
-GRAPH_FEATURE = ['lobbyist_score_final', 'total_senate_connections', 'total_house_connections', 'combined_seniority_score', 'PI_combined_total']
 
 OTHER_FEATURE = ['net_trading_intensity', 'net_trading_amt', 'relative_trade_size_to_self', 'beneficial_ownership_score','title_score',
-                 'TRANS_TIMELINESS_clean', 'execution_timeliness', 'filing_lag_days', 'filing_timeliness']
+                 'TRANS_TIMELINESS_clean', 'execution_timeliness', 'filing_lag_days', 'filing_timeliness', 'security_category', 'trans_amt']
 
 NETWORK_TIME_IND_FEATURE = ['is_lobby', 'has_lobby', 'has_donate', 'NODEID']
 
 NETWORK_TIME_DEP_FEATURE = ['important_connections', 'full_congress_connections', 
                             'house_t2_important_connections', 'house_t2_full_congress_connections', 
-                            'house_t1_important_connections', 'house_t1_full_congress_connections'
+                            'house_t1_important_connections', 'house_t1_full_congress_connections',
                             'sen_important_connections', 'sen_full_congress_connections', 
                             'sen_t2_important_connections', 'sen_t2_full_congress_connections', 
                             'sen_t1_important_connections', 'sen_t1_full_congress_connections']
@@ -65,11 +63,11 @@ PAGERANK_FEATURE = ['ppr_topK_exp', 'num_topK_neighbors', 'ppr_house_0.85', 'ppr
 
 
 
-FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + GRAPH_FEATURE + OTHER_FEATURE + \
+FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + OTHER_FEATURE + \
             NETWORK_TIME_IND_FEATURE + NETWORK_TIME_DEP_FEATURE + NETWORK_ZSCORE_FEATURE + PAGERANK_FEATURE
 
 
-IMPORTANT_KEYS = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;", "TRANS_CODE"]
+IMPORTANT_KEYS = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;", "TRANS_CODE", "ISSUERTRADINGSYMBOL", "NODEID"]
 PROBABILITY = ['snorkel_prob']
 PREDICTION = ['y_pred']
 
@@ -80,7 +78,6 @@ class Feature_Data_Creator:
         
         self.transaction_code_features = TRANSACTION_CODE_FEATURE
         self.footnote_features = FOOTNOTE_FEATURE
-        self.graph_features = GRAPH_FEATURE
         self.other_features = OTHER_FEATURE
         self.network_time_ind_features = NETWORK_TIME_IND_FEATURE
         self.network_time_dep_features = NETWORK_TIME_DEP_FEATURE
@@ -120,9 +117,6 @@ class Feature_Data_Creator:
             ## Creates footnotes features
             self.__create_footnote_features()
             
-            ## Create graph features
-            self.__create_graph_features()
-            
             ## Create other features
             self.__create_other_features()
             
@@ -157,18 +151,6 @@ class Feature_Data_Creator:
         
         data_to_merge = footnote_feature.create_features()
         
-        self.__merge_features(data_to_merge, key_columns, feature_columns)
-    
-################################################################################
-# Create Graph features
-################################################################################
-
-    def __create_graph_features(self):
-        key_columns = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;"] 
-        feature_columns = self.graph_features
-        
-        data_to_merge = graph_feature.create_features()
-        data_to_merge['TRANS_DATE'] = pd.to_datetime(data_to_merge['TRANS_DATE'])
         self.__merge_features(data_to_merge, key_columns, feature_columns)
 
 ################################################################################
@@ -226,13 +208,6 @@ class Feature_Data_Creator:
 ################################################################################  
 
     def __merge_features(self, data_to_merge, key_columns, feature_columns):
-        
-        # if len(feature_columns) > 15:
-        #     data = dd.merge(self.data,
-        #                   data_to_merge,
-        #                   on = key_columns, 
-        #                   how = "left")
-        # else:
 
         data = pd.merge(
             self.data,
@@ -258,7 +233,6 @@ class Feature_Data_Creator:
         
         print(f"=== Before removal length {len(to_remove)} === ")
         to_remove = to_remove.dropna(subset=columns)
-        to_remove = to_remove.drop(columns=columns)
         print(f"=== After removal length {len(to_remove)} === ")
         
         self.data = to_remove
