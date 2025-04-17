@@ -168,7 +168,6 @@ The code structure to create data is split into 4 main responsibilities
          │   ├── footnote_feature.py                # Feature - footnote
          │   ├── network_feature.py                 # Feature - network
          │   ├── other_feature.py                   # Feature - other transactions
-         │   ├── pagerank_feature.py                # Feature - pagerank
          │   └── transaction_code_feature.py        # Feature - transaction code
          │
          ├── preprocess_feature/
@@ -179,7 +178,11 @@ The code structure to create data is split into 4 main responsibilities
          │   ├── create_labels_2_anomaly_scores.ipynb          
          │   ├── create_labels_3_snorkel_labelling.ipynb       
          │   └── create_network_helper_1_time_dep.ipynb
-         │ 
+         │
+         ├── notebook_references/ 
+         │   ├── baseline_model.ipynb        
+         │   └── challenger_1_model.ipynb    
+
          ├── main/
          │   └── main.ipynb                         # Run this main file
 ```
