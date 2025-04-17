@@ -41,8 +41,8 @@ FINAL_FOLDER = RAW_DATA_FOLDER+"/compiled"
 EXCLUDED_FILES = ['owner_signature.tsv']
 
 # Final files present in compiled
-COMPILED_FILES = ["DERIV_HOLDING.csv", "DERIV_TRANS.csv", "FOOTNOTES.csv", "NONDERIV_HOLDING.csv",\
-                  "NONDERIV_TRANS.csv", "REPORTINGOWNER.csv", "SUBMISSION.csv"]
+COMPILED_FILES = ["DERIV_TRANS.csv","NONDERIV_TRANS.csv", "FOOTNOTES.csv",\
+                   "REPORTINGOWNER.csv", "SUBMISSION.csv"] # Exist in SEC but not used: "DERIV_HOLDING.csv", "NONDERIV_HOLDING.csv"
 
 class Data_Extractor:
     def __init__(self):
