@@ -129,7 +129,7 @@ As the dataset is too large for github to handle, this project's data is linked 
 
 ```
 # Code
-The code structure to create datais split into 4 main responsibilities
+The code structure to create data is split into 4 main responsibilities
 * extract
   * Data_Extractor: Extracts and merges form 4 data
 
