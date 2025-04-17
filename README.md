@@ -37,10 +37,10 @@ mkdir -p data_untracked/raw/sec_submissions/interim \
          data_untracked/raw/sec_submissions/compiled \
          data_untracked/raw/abnormal_returns/crsp \
          data_untracked/raw/abnormal_returns/fred \
-         data_untracked/raw/abnormal_returns/trans_ars \ 
+         data_untracked/raw/abnormal_returns/trans_ars \
          data_untracked/raw/profile_data \
-         data_untracked/processed \ 
-         data_untracked/features \
+         data_untracked/processed \
+         data_untracked/features
  ```
 
  - **Step 5: Download datasets from the Google Drive Link below**
