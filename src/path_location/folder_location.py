@@ -41,3 +41,11 @@ STOCK_DATA_FOLDER = 'crsp/daily_stock_data_by_ticker'
 DAILY_BETA_FOLDER = 'crsp/split_csv_parts'
 RISK_FREE_RATE_DATA = 'fred/risk_free_rate_daily.csv'
 TRANS_ARS_FOLDER = 'trans_ars'
+
+#####################
+# models folder
+#####################
+MODELS_FOLDER = "../../models"
+CHALLENGER_1 = "rf_tc.pkl"
+CHALLENGER_2 = "lr_meta.pkl"
+BASELINE = "rf_baseline.pkl"
