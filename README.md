@@ -37,10 +37,10 @@ mkdir -p data_untracked/raw/sec_submissions/interim \
          data_untracked/raw/sec_submissions/compiled \
          data_untracked/raw/abnormal_returns/crsp \
          data_untracked/raw/abnormal_returns/fred \
-         data_untracked/raw/abnormal_returns/trans_ars \ 
+         data_untracked/raw/abnormal_returns/trans_ars \
          data_untracked/raw/profile_data \
-         data_untracked/processed \ 
-         data_untracked/features \
+         data_untracked/processed \
+         data_untracked/features
  ```
 
  - **Step 5: Download datasets from the Google Drive Link below**
@@ -121,12 +121,11 @@ As the dataset is too large for github to handle, this project's data is linked 
          │
          ├── features/                                                 # Folder that stores all the Key-Feature files
          │   ├── footnote_word_count_feature.csv
+         │   ├── transaction_code_feature.csv
          │   ├── other_feature.csv
-         │   ├── network_features.csv
          │   ├── network_time_dep_feature.csv
          │   ├── network_time_ind_feature.csv
-         │   ├── pagerank_feature.csv
-         │   └── graph_feature.csv
+         │   └── zscore_feature.csv
 
 ```
 # Code
@@ -142,7 +141,7 @@ The code structure to create data is split into 4 main responsibilities
     * footnote_feature.py
     * network_feature.py
     * other_feature.py
-    * transaction_code.py
+    * transaction_code_feature.py
 
 * preprocess
   * Feature_Preprocessor: preprocesses data into train and testing
@@ -167,7 +166,6 @@ The code structure to create data is split into 4 main responsibilities
          ├── create_features/                       # Folder that involves creating features, labels and preprocessing 
          │   ├── features.py                        # Contains class to create all features  
          │   ├── footnote_feature.py                # Feature - footnote
-         │   ├── graph_feature.py                   # Feature - graph
          │   ├── network_feature.py                 # Feature - network
          │   ├── other_feature.py                   # Feature - other transactions
          │   ├── pagerank_feature.py                # Feature - pagerank
@@ -176,7 +174,7 @@ The code structure to create data is split into 4 main responsibilities
          ├── preprocess_feature/
          │   └── preprocess.py/                     # Contains class to preprocesses features to be useable and create training testing
          │
-         ├── notebook_references/                              # Folder to see steps on how labels are created
+         ├── notebook_references/                              # Folder to see steps on how labels and certain features are created
          │   ├── create_labels_1_abnormal_returns.ipynb        
          │   ├── create_labels_2_anomaly_scores.ipynb          
          │   ├── create_labels_3_snorkel_labelling.ipynb       

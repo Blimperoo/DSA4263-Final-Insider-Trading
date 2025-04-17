@@ -18,7 +18,6 @@ if parent_dir not in sys.path:
 import transaction_code_feature
 import network_feature
 import footnote_feature
-import pagerank_feature
 import other_feature
 
 from path_location import folder_location
@@ -59,12 +58,8 @@ NETWORK_ZSCORE_FEATURE = ['full_congress_connections_z', 'sen_full_congress_conn
                           'sen_t2_important_connections_z_is_low', 'sen_t2_important_connections_z_is_high', 'important_connections_z_cat', 'important_connections_z_is_low',
                           'important_connections_z_is_high', 'house_t2_important_connections_z_cat', 'house_t2_important_connections_z_is_low','house_t2_important_connections_z_is_high']
 
-PAGERANK_FEATURE = ['ppr_topK_exp', 'num_topK_neighbors', 'ppr_house_0.85', 'ppr_house_0.95', 'ppr_senate_0.85', 'ppr_senate_0.95']
-
-
-
 FEATURES = TRANSACTION_CODE_FEATURE + FOOTNOTE_FEATURE + OTHER_FEATURE + \
-            NETWORK_TIME_IND_FEATURE + NETWORK_TIME_DEP_FEATURE + NETWORK_ZSCORE_FEATURE + PAGERANK_FEATURE
+            NETWORK_TIME_IND_FEATURE + NETWORK_TIME_DEP_FEATURE + NETWORK_ZSCORE_FEATURE
 
 
 IMPORTANT_KEYS = ["ACCESSION_NUMBER", "TRANS_SK", "TRANS_DATE", "RPTOWNERNAME_;", "TRANS_CODE", "ISSUERTRADINGSYMBOL", "NODEID"]
@@ -82,7 +77,6 @@ class Feature_Data_Creator:
         self.network_time_ind_features = NETWORK_TIME_IND_FEATURE
         self.network_time_dep_features = NETWORK_TIME_DEP_FEATURE
         self.network_zscore_features = NETWORK_ZSCORE_FEATURE
-        self.pagerank_features = PAGERANK_FEATURE
         
         ## Combined features
         self.features = FEATURES
@@ -101,12 +95,10 @@ class Feature_Data_Creator:
         if (FINAL_FEATURES_FILE in processed_folder):
             print("=== Final features file present ===")
             load_data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FEATURES_FILE}', parse_dates=['TRANS_DATE'])
+            print(f"=== Reading of {FINAL_FEATURES_FILE} successful with shape {load_data.shape} ===")
             self.data = load_data
         else:
             print("=== Final features file not found. Begin creating ===")
-
-            ## Create pagerank features
-            self.__create_pagerank_features()
             
             ## Create network features
             self.__create_network_features()
@@ -180,16 +172,6 @@ class Feature_Data_Creator:
         data_to_merge = network_feature.create_zscore_features()
         self.__merge_features(data_to_merge, key_columns, network_zscore_feature)
 
-################################################################################
-# Create pagerank features
-################################################################################
-
-    def __create_pagerank_features(self):
-        key_columns = ["ACCESSION_NUMBER"] 
-        feature_columns = self.pagerank_features
-        
-        data_to_merge = pagerank_feature.create_features()
-        self.__merge_features(data_to_merge, key_columns, feature_columns)
 
 ################################################################################
 # Create Other features

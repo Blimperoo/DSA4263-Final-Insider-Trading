@@ -388,9 +388,9 @@ def create_zscore_features():
         print("=== Network zscore_features file is found. Extracting ===")
         df_to_return = pd.read_csv(f'{FEATURES_FOLDER}/{FINAL_FILE_3}')
 
-    else: # Create features and save
-        print("=== Network zscore_features file not found, begin creating  ===")
-        print("--- Please refer to notebook --- ")
+    else: 
+        print(f"========== Required zscore_features files not present. Please download from shared google drive: features/{FINAL_FILE_3} ==========")
+   
         df_to_return = pd.DataFrame()
         
     return df_to_return

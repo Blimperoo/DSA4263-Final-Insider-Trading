@@ -1,13 +1,41 @@
-# for calc_abnormal_returns 
-tqdm
-dask
-dask[distributed]
-jupyter
-ipywidgets 
+# Part of python standard library, do not have to be listed  
+# os 
+# sys 
+# re
+# math
+# time
+# warnings
+# gc 
+# glob 
+# datetime
+# bisect
+# collections
+# multiprocessing
+
+
+# General libraries (data manipulation, visualization, and utilities)
+numpy==1.24.3
+pandas==1.5.3
+tqdm==4.67.1
+matplotlib==3.5.3
+seaborn==0.11.2
+
+# Jupyter and interactive visualization (for calc_abnormal_returns)
+jupyter==1.0.0
+ipywidgets==8.0.2
 bokeh>=3.1.0
+IPython==8.5.0
 
 # Snorkel labelling , automatically also installs these: absl-py-2.2.1 grpcio-1.71.0 snorkel-0.10.0 tensorboard-2.19.0
-snorkel
+snorkel==0.9.9
+numba>=0.57.0
 
-# Network features
-igraph
+# Features
+igraph ==0.11.4
+dask ==2025.3.0
+nltk ==3.8.0
+
+
+#model
+scikit-learn==1.5.2
+imbalanced-learn==0.13.0

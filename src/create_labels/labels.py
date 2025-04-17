@@ -33,7 +33,7 @@ class Label_Data_Creator:
             print("========== Required labelled files present ==========")
             print("========== Skip data label creation ==========")
             self.data = pd.read_csv(f'{PROCESSED_DATA_FOLDER}/{FINAL_FILE}')
-            print("========== Reading successful ==========")
+            print(f"========== Reading of {FINAL_FILE} successful with shape {self.data.shape} ==========")
             
         else:
             print(f"========== Required labelled files not present. Please download from shared google drive: processed/{FINAL_FILE} ==========")
