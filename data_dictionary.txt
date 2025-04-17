@@ -1,0 +1,558 @@
+DATA DICTIONARY
+================
+
+Column Name     : TRANS_SK
+Data Type       : int64
+Unique Values   : 1413610
+Sample Values   : [3794004, 2834113, 3043733, 3043734, 3043284]
+----------------------------------------
+Column Name     : ACCESSION_NUMBER
+Data Type       : object
+Unique Values   : 444920
+Sample Values   : ['0001181431-09-023155', '0001181431-12-005367', '0001181431-12-047732', '0001181431-12-049839', '0001181431-12-058269']
+----------------------------------------
+Column Name     : TRANS_DATE
+Data Type       : object
+Unique Values   : 3783
+Sample Values   : ['2009-05-04', '2012-01-31', '2012-08-03', '2012-08-07', '2012-09-07']
+----------------------------------------
+Column Name     : ISSUERTRADINGSYMBOL
+Data Type       : object
+Unique Values   : 8216
+Sample Values   : ['EXAC', 'LKI', 'TARR', 'AVII', 'DENN']
+----------------------------------------
+Column Name     : RPTOWNERNAME_;
+Data Type       : object
+Unique Values   : 52251
+Sample Values   : ['BINCH JAMES G', 'FELDMAN MYER', 'FRIEDMAN LUCY N', 'HAYWOOD GEORGE WEAVER', 'MILLER THOMAS A N']
+----------------------------------------
+Column Name     : snorkel_prob
+Data Type       : float64
+Unique Values   : 2916
+Sample Values   : [1.0, 0.0900525862146798, 0.2198549032573967, 0.9999999719850609, 0.1369778405340313]
+----------------------------------------
+Column Name     : y_pred
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [1, 0]
+----------------------------------------
+Column Name     : ppr_topK_exp
+Data Type       : float64
+Unique Values   : 9632
+Sample Values   : [0.0, 1.0183412669706375e-05, 0.0001784901441215, 9.460563815239196e-06, 0.0001680076595311]
+----------------------------------------
+Column Name     : num_topK_neighbors
+Data Type       : float64
+Unique Values   : 4
+Sample Values   : [0.0, 1.0, 2.0, 3.0]
+----------------------------------------
+Column Name     : ppr_house_0.85
+Data Type       : float64
+Unique Values   : 111554
+Sample Values   : [0.0, 1.0446744779109328e-05, 2.21096481288789e-05, 0.000183022172036, 0.0001830652691717]
+----------------------------------------
+Column Name     : ppr_house_0.95
+Data Type       : float64
+Unique Values   : 111546
+Sample Values   : [0.0, 1.4533630928756673e-05, 1.912200376453053e-05, 0.0001871115214694, 0.0001871147639946]
+----------------------------------------
+Column Name     : ppr_senate_0.85
+Data Type       : float64
+Unique Values   : 69871
+Sample Values   : [0.0, 1.832751931492133e-05, 1.810987630422686e-05, 0.0001445878977492, 9.322606169165548e-05]
+----------------------------------------
+Column Name     : ppr_senate_0.95
+Data Type       : float64
+Unique Values   : 69878
+Sample Values   : [0.0, 1.6902536851188797e-05, 1.6753232120432962e-05, 0.0001636212262962, 0.0001387196535601]
+----------------------------------------
+Column Name     : NODEID
+Data Type       : float64
+Unique Values   : 37935
+Sample Values   : [249380.0, 421909.0, 79007.0, 136349.0, 139688.0]
+----------------------------------------
+Column Name     : important_connections
+Data Type       : int64
+Unique Values   : 213
+Sample Values   : [89, 95, 62, 91, 90]
+----------------------------------------
+Column Name     : full_congress_connections
+Data Type       : int64
+Unique Values   : 445
+Sample Values   : [333, 332, 326, 325, 222]
+----------------------------------------
+Column Name     : house_t2_important_connections
+Data Type       : int64
+Unique Values   : 183
+Sample Values   : [169, 160, 196, 173, 175]
+----------------------------------------
+Column Name     : house_t2_full_congress_connections
+Data Type       : int64
+Unique Values   : 437
+Sample Values   : [430, 423, 426, 424, 422]
+----------------------------------------
+Column Name     : house_t1_important_connections
+Data Type       : int64
+Unique Values   : 28
+Sample Values   : [0, 1, 2, 5, 4]
+----------------------------------------
+Column Name     : house_t1_full_congress_connections
+Data Type       : int64
+Unique Values   : 72
+Sample Values   : [1, 0, 2, 7, 4]
+----------------------------------------
+Column Name     : sen_important_connections
+Data Type       : int64
+Unique Values   : 92
+Sample Values   : [28, 88, 86, 89, 0]
+----------------------------------------
+Column Name     : sen_full_congress_connections
+Data Type       : int64
+Unique Values   : 101
+Sample Values   : [21, 97, 95, 94, 49]
+----------------------------------------
+Column Name     : sen_t2_important_connections
+Data Type       : int64
+Unique Values   : 98
+Sample Values   : [23, 89, 82, 24, 32]
+----------------------------------------
+Column Name     : sen_t2_full_congress_connections
+Data Type       : int64
+Unique Values   : 104
+Sample Values   : [18, 98, 20, 31, 30]
+----------------------------------------
+Column Name     : sen_t1_important_connections
+Data Type       : int64
+Unique Values   : 53
+Sample Values   : [0, 2, 1, 11, 12]
+----------------------------------------
+Column Name     : sen_t1_full_congress_connections
+Data Type       : int64
+Unique Values   : 63
+Sample Values   : [0, 1, 2, 12, 11]
+----------------------------------------
+Column Name     : full_congress_connections_z
+Data Type       : float64
+Unique Values   : 385852
+Sample Values   : [0.8769723305050475, 0.404706458468053, 0.3428560853145493, 0.423546487074582, 0.2206010345797161]
+----------------------------------------
+Column Name     : sen_full_congress_connections_z
+Data Type       : float64
+Unique Values   : 378888
+Sample Values   : [1.034540900066882, 0.8088932394235517, 0.7429618568554962, 0.7786095065028836, 0.642982528736531]
+----------------------------------------
+Column Name     : sen_t2_full_congress_connections_z
+Data Type       : float64
+Unique Values   : 289290
+Sample Values   : [10.11044364835033, 5.176332009834069, 6.120190051844085, 3.2230337020918225, 0.729551336109248]
+----------------------------------------
+Column Name     : house_t2_full_congress_connections_z
+Data Type       : float64
+Unique Values   : 298975
+Sample Values   : [10.861256935288583, 7.904902740940822, 7.866273818738623, 4.816224612056703, 6.045901672629415]
+----------------------------------------
+Column Name     : sen_important_connections_z
+Data Type       : float64
+Unique Values   : 371259
+Sample Values   : [0.8589301018687168, 1.4550741991431255, 1.1037638464623645, 1.7026114331019335, 0.7825141441539176]
+----------------------------------------
+Column Name     : sen_t2_important_connections_z
+Data Type       : float64
+Unique Values   : 225506
+Sample Values   : [0.6363787072221867, 3.3017446095486465, 4.298150033640123, 2.24439496748335, 1.013276487671949]
+----------------------------------------
+Column Name     : important_connections_z
+Data Type       : float64
+Unique Values   : 395035
+Sample Values   : [0.2766007011482147, 0.8509786019551575, 0.3881359827625503, 1.4517352216818415, 0.3877366984596272]
+----------------------------------------
+Column Name     : house_t2_important_connections_z
+Data Type       : float64
+Unique Values   : 224335
+Sample Values   : [4.883348959455052, 3.931006631827324, 4.986063295351043, 3.6130429735717726, 4.155238219084597]
+----------------------------------------
+Column Name     : full_congress_connections_z_is_low
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [0.0, 1.0]
+----------------------------------------
+Column Name     : full_congress_connections_z_is_high
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [0.0, 1.0]
+----------------------------------------
+Column Name     : sen_full_congress_connections_z_is_low
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [0.0, 1.0]
+----------------------------------------
+Column Name     : sen_full_congress_connections_z_is_high
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [1.0, 0.0]
+----------------------------------------
+Column Name     : sen_t2_full_congress_connections_z_is_low
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [0.0, 1.0]
+----------------------------------------
+Column Name     : sen_t2_full_congress_connections_z_is_high
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [1.0, 0.0]
+----------------------------------------
+Column Name     : house_t2_full_congress_connections_z_is_low
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [0.0, 1.0]
+----------------------------------------
+Column Name     : house_t2_full_congress_connections_z_is_high
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [1.0, 0.0]
+----------------------------------------
+Column Name     : sen_important_connections_z_is_low
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [0.0, 1.0]
+----------------------------------------
+Column Name     : sen_important_connections_z_is_high
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [0.0, 1.0]
+----------------------------------------
+Column Name     : sen_t2_important_connections_z_is_low
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [0.0, 1.0]
+----------------------------------------
+Column Name     : sen_t2_important_connections_z_is_high
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [1.0, 0.0]
+----------------------------------------
+Column Name     : important_connections_z_is_low
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [0.0, 1.0]
+----------------------------------------
+Column Name     : important_connections_z_is_high
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [0.0, 1.0]
+----------------------------------------
+Column Name     : house_t2_important_connections_z_is_low
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [0.0, 1.0]
+----------------------------------------
+Column Name     : house_t2_important_connections_z_is_high
+Data Type       : float64
+Unique Values   : 2
+Sample Values   : [1.0, 0.0]
+----------------------------------------
+Column Name     : js_bin
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : s_bin
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [1, 0]
+----------------------------------------
+Column Name     : b_bin
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : jb_bin
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : ob_bin
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : gb_bin
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : gift
+Data Type       : float64
+Unique Values   : 17
+Sample Values   : [0.0, 3.0, 4.0, 1.0, 5.0]
+----------------------------------------
+Column Name     : distribution
+Data Type       : float64
+Unique Values   : 23
+Sample Values   : [0.0, 1.0, 2.0, 5.0, 4.0]
+----------------------------------------
+Column Name     : charity
+Data Type       : float64
+Unique Values   : 4
+Sample Values   : [0.0, 1.0, 2.0, 3.0]
+----------------------------------------
+Column Name     : price
+Data Type       : float64
+Unique Values   : 84
+Sample Values   : [0.0, 1.0, 2.0, 3.0, 9.0]
+----------------------------------------
+Column Name     : number
+Data Type       : float64
+Unique Values   : 28
+Sample Values   : [0.0, 1.0, 2.0, 3.0, 4.0]
+----------------------------------------
+Column Name     : ball
+Data Type       : float64
+Unique Values   : 18
+Sample Values   : [0.0, 2.0, 4.0, 9.0, 1.0]
+----------------------------------------
+Column Name     : pursuant
+Data Type       : float64
+Unique Values   : 21
+Sample Values   : [0.0, 1.0, 3.0, 2.0, 6.0]
+----------------------------------------
+Column Name     : 10b5-1
+Data Type       : float64
+Unique Values   : 22
+Sample Values   : [0.0, 2.0, 1.0, 3.0, 5.0]
+----------------------------------------
+Column Name     : 16b-3
+Data Type       : float64
+Unique Values   : 13
+Sample Values   : [0.0, 1.0, 2.0, 3.0, 5.0]
+----------------------------------------
+Column Name     : net_trading_intensity
+Data Type       : float64
+Unique Values   : 608
+Sample Values   : [-1.0, -0.0666666666666666, 0.0, 0.3333333333333333, -0.6666666666666666]
+----------------------------------------
+Column Name     : net_trading_amt
+Data Type       : float64
+Unique Values   : 8124
+Sample Values   : [-1.0, 0.0, 0.4401972200708691, -0.989616568886568, -0.907923573683705]
+----------------------------------------
+Column Name     : relative_trade_size_to_self
+Data Type       : float64
+Unique Values   : 1205785
+Sample Values   : [1.0, 2.061855670103093, 0.9595959595959596, 0.7880546075085324, 0.6000540589242274]
+----------------------------------------
+Column Name     : beneficial_ownership_score
+Data Type       : int64
+Unique Values   : 6
+Sample Values   : [0, 4, 2, 1, 5]
+----------------------------------------
+Column Name     : title_score
+Data Type       : int64
+Unique Values   : 12
+Sample Values   : [0, 2, 5, 4, 6]
+----------------------------------------
+Column Name     : filing_lag_days
+Data Type       : int64
+Unique Values   : 2189
+Sample Values   : [2, 25, 21, 4, 5]
+----------------------------------------
+Column Name     : is_lobby_True
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : has_lobby_give
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : has_lobby_give_and_receive
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : has_lobby_receive
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : has_donate_give
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : has_donate_give_and_receive
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : has_donate_receive
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : full_congress_connections_z_cat_high
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : full_congress_connections_z_cat_low
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : full_congress_connections_z_cat_medium
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [1, 0]
+----------------------------------------
+Column Name     : sen_full_congress_connections_z_cat_high
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [1, 0]
+----------------------------------------
+Column Name     : sen_full_congress_connections_z_cat_low
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : sen_full_congress_connections_z_cat_medium
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : sen_t2_full_congress_connections_z_cat_high
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [1, 0]
+----------------------------------------
+Column Name     : sen_t2_full_congress_connections_z_cat_low
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : sen_t2_full_congress_connections_z_cat_medium
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : house_t2_full_congress_connections_z_cat_high
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [1, 0]
+----------------------------------------
+Column Name     : house_t2_full_congress_connections_z_cat_low
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : house_t2_full_congress_connections_z_cat_medium
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : sen_important_connections_z_cat_high
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : sen_important_connections_z_cat_low
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : sen_important_connections_z_cat_medium
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [1, 0]
+----------------------------------------
+Column Name     : sen_t2_important_connections_z_cat_high
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [1, 0]
+----------------------------------------
+Column Name     : sen_t2_important_connections_z_cat_low
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : sen_t2_important_connections_z_cat_medium
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : important_connections_z_cat_high
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : important_connections_z_cat_low
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : important_connections_z_cat_medium
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [1, 0]
+----------------------------------------
+Column Name     : house_t2_important_connections_z_cat_high
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [1, 0]
+----------------------------------------
+Column Name     : house_t2_important_connections_z_cat_low
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : house_t2_important_connections_z_cat_medium
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : TRANS_TIMELINESS_clean_early
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : TRANS_TIMELINESS_clean_late
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : TRANS_TIMELINESS_clean_on_time
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [1, 0]
+----------------------------------------
+Column Name     : execution_timeliness_after_trans
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : execution_timeliness_before_trans
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : execution_timeliness_on_trans
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [1, 0]
+----------------------------------------
+Column Name     : filing_timeliness_early_filing
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
+Column Name     : filing_timeliness_late_filing
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [1, 0]
+----------------------------------------
+Column Name     : filing_timeliness_on_time_filing
+Data Type       : int64
+Unique Values   : 2
+Sample Values   : [0, 1]
+----------------------------------------
